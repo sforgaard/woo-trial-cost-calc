@@ -59,7 +59,8 @@
                 id="woo-dev-auto">AUTO</span></span><span class="slider-value" id="woo-dev-display">$2,000/mo</span>
           </div><input type="range" id="woo-dev-slider" min="0" max="5000" value="2000" step="250">
           <div class="slider-ticks">
-            <span>$0</span><span>$1.25K</span><span>$2.5K</span><span>$3.75K</span><span>$5K</span></div>
+            <span>$0</span><span>$1.25K</span><span>$2.5K</span><span>$3.75K</span><span>$5K</span>
+          </div>
         </div>
         <div class="slider-group">
           <div class="slider-label"><span>Plugins/Apps <span class="auto-badge"
@@ -393,7 +394,8 @@
             <div class="slider-label"><span></span><span class="slider-value" id="roadmap-gmv-display">$500,000</span>
             </div><input type="range" id="roadmap-gmv-slider" min="0" max="100" value="35" step="1">
             <div class="slider-ticks">
-              <span>$0</span><span>$250K</span><span>$500K</span><span>$1M</span><span>$5M+</span></div>
+              <span>$0</span><span>$250K</span><span>$500K</span><span>$1M</span><span>$5M+</span>
+            </div>
           </div>
         </div>
         <div class="roadmap-savings-banner">
@@ -455,18 +457,26 @@
         <h3>ROI Sensitivity Model</h3>
         <div class="roi-sliders">
           <div class="slider-group">
-            <div class="slider-label"><span>Enrollment Rate Multiplier</span><span class="slider-value"
-                id="roi-enrollment-display">1.0x</span></div><input type="range" id="roi-enrollment-slider" min="25"
-              max="200" value="100" step="5">
+            <div class="slider-label"><span class="has-tooltip">Enrollment Rate Multiplier<span
+                  class="tooltip-text">Scales the estimated % of merchants who enroll in the Growth Engine at each tier.
+                  Baseline assumptions range from 5% (Tier 2) to 50% (Tier 6). At 0.5x, enrollment is halved (more
+                  pessimistic). At 2.0x, enrollment doubles (more optimistic). These rates are assumptions, not
+                  validated.</span></span><span class="slider-value" id="roi-enrollment-display">1.0x</span></div><input
+              type="range" id="roi-enrollment-slider" min="25" max="200" value="100" step="5">
             <div class="slider-ticks">
-              <span>0.25x</span><span>0.5x</span><span>1.0x</span><span>1.5x</span><span>2.0x</span></div>
+              <span>0.25x</span><span>0.5x</span><span>1.0x</span><span>1.5x</span><span>2.0x</span>
+            </div>
           </div>
           <div class="slider-group">
-            <div class="slider-label"><span>Churn Saved Rate Multiplier</span><span class="slider-value"
-                id="roi-churn-display">1.0x</span></div><input type="range" id="roi-churn-slider" min="25" max="200"
-              value="100" step="5">
+            <div class="slider-label"><span class="has-tooltip">Churn Saved Rate Multiplier<span
+                  class="tooltip-text">Scales the estimated % of at-risk revenue retained by the Growth Engine. Baseline
+                  ranges from 5% (Tier 2, low switching cost) to 50% (Tier 6, high switching cost). Higher switching
+                  scores mean more merchants are retained. Adjust to stress-test how sensitive the ROI is to retention
+                  effectiveness.</span></span><span class="slider-value" id="roi-churn-display">1.0x</span></div><input
+              type="range" id="roi-churn-slider" min="25" max="200" value="100" step="5">
             <div class="slider-ticks">
-              <span>0.25x</span><span>0.5x</span><span>1.0x</span><span>1.5x</span><span>2.0x</span></div>
+              <span>0.25x</span><span>0.5x</span><span>1.0x</span><span>1.5x</span><span>2.0x</span>
+            </div>
           </div>
         </div>
         <div class="roi-output" id="roi-output"></div>
@@ -508,7 +518,8 @@
   <!-- Footer -->
   <div class="footer">
     <p>Built by Shawn Forgaard | Woo Territory & Capacity Planning Trial</p>
-    <p style="margin-top:3px">This tool visualizes the territory plan write-up. No merchant data (rev-ops-trial.db) is
+    <p style="margin-top:3px">This tool visualizes the territory plan write-up. No Woo or merchant data
+      (rev-ops-trial.db) is
       embedded or referenced, all inputs are formula-driven from analysis findings, published rates, and plan
       assumptions.</p>
   </div>

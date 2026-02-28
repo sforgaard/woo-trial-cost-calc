@@ -135,6 +135,21 @@ function updateRoadmapChart() {
             scales: {
                 x: { grid: { display: false }, ticks: { color: '#6B5F82', font: { size: 10 } } },
                 y: { grid: { color: 'rgba(45,33,69,0.4)' }, ticks: { color: '#6B5F82', font: { size: 9 }, callback: v => fmtF(v) } }
+            },
+            animation: {
+                onComplete: function () {
+                    const ctx = this.ctx;
+                    ctx.save();
+                    ctx.font = '600 10px Inter, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = '#C4B8D8';
+                    this.data.datasets[0].data.forEach((val, i) => {
+                        if (val === 0) return;
+                        const meta = this.getDatasetMeta(0).data[i];
+                        ctx.fillText(fmtF(val), meta.x, meta.y - 6);
+                    });
+                    ctx.restore();
+                }
             }
         }
     });

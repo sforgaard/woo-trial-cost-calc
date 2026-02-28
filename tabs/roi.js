@@ -7,7 +7,8 @@ const ROI_TIERS = [
     { tier: 3, reward: 'WC Subs/CRM', gmv: '$100K', totalMerchs: 231, wcpayMerchs: 59, wcpayRate: 25.5, baseEnroll: 10, atRiskRev: 172, churnSaved: 15, oppCost: 5221, programCost: 0 },
     { tier: 4, reward: 'Jetpack Security', gmv: '$250K', totalMerchs: 194, wcpayMerchs: 52, wcpayRate: 26.8, baseEnroll: 20, atRiskRev: 0, churnSaved: 25, oppCost: 9312, programCost: 0 },
     { tier: 5, reward: 'Pressable+Metorik', gmv: '$500K', totalMerchs: 192, wcpayMerchs: 47, wcpayRate: 24.5, baseEnroll: 35, atRiskRev: 5626, churnSaved: 40, oppCost: 36288, programCost: 40320 },
-    { tier: 6, reward: 'Custom Rate', gmv: '$1M+', totalMerchs: 260, wcpayMerchs: 40, wcpayRate: 15.4, baseEnroll: 50, atRiskRev: 656140, churnSaved: 50, oppCost: 0, programCost: 0 }
+    { tier: 6, reward: 'Custom Rate', gmv: '$1M+', totalMerchs: 260, wcpayMerchs: 40, wcpayRate: 15.4, baseEnroll: 50, atRiskRev: 656140, churnSaved: 50, oppCost: 0, programCost: 0 },
+    { tier: 7, reward: '$20M+', gmv: '$20M+', totalMerchs: 45, wcpayMerchs: 3, wcpayRate: 6.7, baseEnroll: 50, atRiskRev: 0, churnSaved: 50, oppCost: 0, programCost: 0, chartOnly: true }
 ];
 
 const BASELINE_ADOPTION = 26.2;
@@ -49,6 +50,8 @@ const STICKINESS_DATA = [
 
 // Tool adoption growth factors by GMV tier
 const ADOPTION_CURVES = [
+    { name: 'WC Services/Tax', growth: 1.3, color: '#8B8FA8' },
+    { name: 'Jetpack', growth: 1.8, color: '#3ECF8E' },
     { name: 'Metorik', growth: 40, color: '#FF6B35' },
     { name: 'WC Subscriptions', growth: 12, color: '#7F54B3' },
     { name: 'AutomateWoo', growth: 7, color: '#60A5FA' },
@@ -68,6 +71,7 @@ function roiUpdate() {
     let totalAtRisk = 0, totalRevSaved = 0, totalProgramCost = 0, totalOppCost = 0;
 
     ROI_TIERS.forEach(t => {
+        if (t.chartOnly) return; // Skip chart-only tiers in ROI calculation
         const adjEnroll = Math.min(100, t.baseEnroll * enrollMult);
         const adjChurn = Math.min(100, t.churnSaved * churnMult);
         const revSaved = t.atRiskRev * (adjChurn / 100);
@@ -84,19 +88,19 @@ function roiUpdate() {
     output.innerHTML = `
         <div class="roi-stat">
             <div class="roi-stat-value" style="color:var(--growth-engine)">${roi.toFixed(1)}x</div>
-            <div class="roi-stat-label">Fully Loaded ROI</div>
+            <div class="roi-stat-label has-tooltip">Fully Loaded ROI<span class="tooltip-text">Revenue Saved ÷ (Program Cost + Opp Cost). "Fully loaded" means the denominator includes both cash spend AND foregone retail revenue from giving products away free. This makes the ROI conservative - if you only count cash cost ($40K Metorik), the ROI is much higher.</span></div>
         </div>
         <div class="roi-stat">
             <div class="roi-stat-value" style="color:var(--positive)">${fmtF(Math.round(totalRevSaved))}</div>
-            <div class="roi-stat-label">Revenue Saved/yr</div>
+            <div class="roi-stat-label has-tooltip">Revenue Saved/yr<span class="tooltip-text">At-Risk WCPay Revenue × Churn Saved %. At-Risk Revenue = (baseline 26.2% adoption − actual tier adoption) × enrolled merchants × mid-tier GMV × 0.65% net margin. This is the WCPay processing margin that would be lost if merchants churned. Uses net margin (0.65%), not gross rate (2.95%), so this figure is conservative.</span></div>
         </div>
         <div class="roi-stat">
             <div class="roi-stat-value" style="color:var(--negative)">${fmtF(Math.round(totalProgramCost))}</div>
-            <div class="roi-stat-label">Program Cost/yr</div>
+            <div class="roi-stat-label has-tooltip">Program Cost/yr<span class="tooltip-text">Cash spend to run the Growth Engine. Currently only Metorik licensing at Tier 5 ($600/yr × enrolled merchants). All other GE products (AutomateWoo, WC Subscriptions, Jetpack Security, Pressable) are Automattic-owned, so their cost is foregone retail revenue (Opp Cost), not cash.</span></div>
         </div>
         <div class="roi-stat">
             <div class="roi-stat-value" style="color:var(--warning)">${fmtF(Math.round(totalOppCost))}</div>
-            <div class="roi-stat-label">Opp Cost (foregone rev)</div>
+            <div class="roi-stat-label has-tooltip">Opp Cost (foregone rev)<span class="tooltip-text">Retail revenue Automattic gives up by providing products free: AutomateWoo ($99/yr), WC Subscriptions ($279/yr), Jetpack Security ($240/yr), Pressable ($540/yr), Metorik ($600/yr). Counted at full retail price to be conservative, though most merchants likely would not have purchased at retail.</span></div>
         </div>
     `;
 }
@@ -136,8 +140,8 @@ function toggleGE(on) {
         if (on) {
             // Project GE impact: boost adoption toward baseline at higher tiers
             const projected = ROI_TIERS.map((t, i) => {
-                const boost = [0, 2, 5, 8, 12, 8]; // Projected adoption lift %
-                return Math.min(35, t.wcpayRate + boost[i]);
+                const boost = [0, 2, 5, 8, 12, 8, 4]; // Projected adoption lift %
+                return Math.min(35, t.wcpayRate + (boost[i] || 0));
             });
             wcpayChart.data.datasets[0].data = projected;
             wcpayChart.data.datasets[0].label = 'Projected w/ GE';
