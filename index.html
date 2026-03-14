@@ -467,26 +467,26 @@
         <h3>ROI Sensitivity Model</h3>
         <div class="roi-sliders">
           <div class="slider-group">
-            <div class="slider-label"><span class="has-tooltip">Enrollment Rate Multiplier<span
+            <div class="slider-label"><span class="has-tooltip">GE Enrollment Scenario<span
                   class="tooltip-text">Scales the estimated % of merchants who enroll in the Growth Engine at each tier.
                   Baseline assumptions range from 5% (Tier 2) to 50% (Tier 6). At 0.5x, enrollment is halved (more
-                  pessimistic). At 2.0x, enrollment doubles (more optimistic). These rates are assumptions, not
-                  validated.</span></span><span class="slider-value" id="roi-enrollment-display">1.0x</span></div><input
+                  pessimistic). At 2.0x, enrollment doubles (more optimistic).</span></span><span class="slider-value" id="roi-enrollment-display">1.00x</span></div><input
               type="range" id="roi-enrollment-slider" min="25" max="200" value="100" step="5">
             <div class="slider-ticks">
-              <span>0.25x</span><span>0.5x</span><span>1.0x</span><span>1.5x</span><span>2.0x</span>
+              <span>Pessimistic</span><span>0.5x</span><span>Baseline</span><span>1.5x</span><span>Optimistic</span>
             </div>
+            <div class="roi-tier-grid" id="enrollment-tier-grid"></div>
           </div>
           <div class="slider-group">
-            <div class="slider-label"><span class="has-tooltip">Churn Saved Rate Multiplier<span
+            <div class="slider-label"><span class="has-tooltip">Retention Effectiveness<span
                   class="tooltip-text">Scales the estimated % of at-risk revenue retained by the Growth Engine. Baseline
                   ranges from 5% (Tier 2, low switching cost) to 50% (Tier 6, high switching cost). Higher switching
-                  scores mean more merchants are retained. Adjust to stress-test how sensitive the ROI is to retention
-                  effectiveness.</span></span><span class="slider-value" id="roi-churn-display">1.0x</span></div><input
+                  scores mean more merchants are retained.</span></span><span class="slider-value" id="roi-churn-display">1.00x</span></div><input
               type="range" id="roi-churn-slider" min="25" max="200" value="100" step="5">
             <div class="slider-ticks">
-              <span>0.25x</span><span>0.5x</span><span>1.0x</span><span>1.5x</span><span>2.0x</span>
+              <span>Pessimistic</span><span>0.5x</span><span>Baseline</span><span>1.5x</span><span>Optimistic</span>
             </div>
+            <div class="roi-tier-grid" id="churn-tier-grid"></div>
           </div>
         </div>
         <div class="roi-output" id="roi-output"></div>
@@ -519,8 +519,9 @@
       </div>
       <div class="chart-section" style="max-width:900px;margin:14px auto">
         <h3>Shopify Churn by Revenue Tier</h3>
-        <div class="chart-subtitle">Higher-GMV merchants disproportionately leave for Shopify</div>
+        <div class="chart-subtitle">Higher-GMV merchants disproportionately leave for Shopify · <em>Adjusts with Churn Saved slider</em></div>
         <div class="chart-container" style="height:320px"><canvas id="shopify-tier-chart"></canvas></div>
+        <div style="font-size:0.65rem;color:var(--text-muted);margin-top:6px;font-style:italic;padding:0 8px">⚠ GMV-at-risk at higher tiers uses midpoint estimates (e.g. $8M avg for $8M-$16M tier). Actual exposure may vary. Merchant counts are from outflow data (604 total to Shopify).</div>
       </div>
     </div>
   </div>

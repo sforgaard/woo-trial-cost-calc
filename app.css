@@ -1319,6 +1319,39 @@ input[type="range"]::-webkit-slider-thumb {
     margin-bottom: 16px;
 }
 
+.roi-tier-grid {
+    margin-top: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    font-size: 0.65rem;
+}
+
+.roi-tier-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 4px 8px;
+    background: rgba(45, 33, 69, 0.3);
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.55rem;
+}
+
+.roi-tier-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 3px 8px;
+    border-top: 1px solid rgba(45, 33, 69, 0.2);
+    color: var(--text-secondary);
+}
+
+.roi-tier-row:hover {
+    background: rgba(127, 84, 179, 0.05);
+}
+
 .roi-output {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
