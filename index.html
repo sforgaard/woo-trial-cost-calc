@@ -545,59 +545,52 @@
     <div class="lockin-container">
       <div class="lockin-hero">
         <h2>The Growth Engine Lock-In Effect</h2>
-        <p class="lockin-subtitle">How progressive ecosystem adoption creates insurmountable switching costs</p>
-        <p class="lockin-thesis">The Growth Engine isn't just free software — it's a <strong>strategic moat</strong>. Each tier
-          wraps another strand around the merchant, embedding Woo deeper into their operations. By Tier 5, migration
-          becomes a 6-figure infrastructure project. By Tier 6, it's economically irrational to leave.</p>
+        <p class="lockin-thesis">Each tier plants roots deeper into the merchant's operations. By Tier 5, uprooting means
+          a 6-figure infrastructure demolition. By Tier 6, leaving is economically irrational.</p>
       </div>
 
-      <div class="lockin-controls">
-        <div class="slider-group" style="max-width:500px;margin:0 auto">
-          <div class="slider-label"><span>Merchant Annual GMV</span><span class="slider-value" id="lockin-gmv-display">$500,000</span></div>
-          <input type="range" id="lockin-gmv-slider" min="0" max="100" value="35" step="1">
-          <div class="slider-ticks"><span>$50K</span><span>$500K</span><span>$5M</span><span>$50M</span></div>
-        </div>
+      <div class="lockin-tier-selector" id="lockin-tier-selector">
+        <button class="tier-btn active" data-tier="0"><span class="tier-btn-label">None</span><span class="tier-btn-gmv">—</span></button>
+        <button class="tier-btn" data-tier="1"><span class="tier-btn-label">T1 WCPay</span><span class="tier-btn-gmv">$0</span></button>
+        <button class="tier-btn" data-tier="2"><span class="tier-btn-label">T2 AutomateWoo</span><span class="tier-btn-gmv">$50K</span></button>
+        <button class="tier-btn" data-tier="3"><span class="tier-btn-label">T3 Subs/CRM</span><span class="tier-btn-gmv">$100K</span></button>
+        <button class="tier-btn" data-tier="4"><span class="tier-btn-label">T4 Security</span><span class="tier-btn-gmv">$250K</span></button>
+        <button class="tier-btn" data-tier="5"><span class="tier-btn-label">T5 Hosting</span><span class="tier-btn-gmv">$500K</span></button>
+        <button class="tier-btn" data-tier="6"><span class="tier-btn-label">T6 Custom</span><span class="tier-btn-gmv">$1M+</span></button>
       </div>
 
-      <div class="lockin-tree-wrapper">
-        <div class="lockin-tree-frame">
-          <img src="WooTree.jpeg" alt="Growth Engine Lock-In Tree" id="lockin-tree-img" class="lockin-tree-img">
-          <img src="Woo Logos 2/Woo_logo_white.svg" alt="Woo" class="lockin-woo-logo">
-          <div class="lockin-tier-labels" id="lockin-tier-labels"></div>
+      <div class="lockin-main">
+        <div class="lockin-tree-col">
+          <div class="lockin-tree-frame">
+            <img src="WooTree.jpeg" alt="Growth Engine Lock-In Tree" id="lockin-tree-img" class="lockin-tree-img">
+            <img src="Woo Logos 2/Woo_logo_white.svg" alt="Woo" class="lockin-woo-logo">
+          </div>
         </div>
-      </div>
-
-      <div class="lockin-gauge-section">
-        <div class="lockin-gauge-title">Switching Difficulty</div>
-        <div class="lockin-gauge-bar">
-          <div class="lockin-gauge-fill" id="lockin-gauge-fill"></div>
-        </div>
-        <div class="lockin-gauge-meta">
-          <span class="lockin-gauge-score" id="lockin-score">5/10</span>
-          <span class="lockin-gauge-label" id="lockin-gauge-label">Moderate Friction</span>
-        </div>
-        <div class="lockin-gauge-ticks">
-          <span>Easy to Switch</span>
-          <span>Moderate</span>
-          <span>Hard to Leave</span>
-          <span>Locked In</span>
-        </div>
-      </div>
-
-      <div class="lockin-narrative" id="lockin-narrative"></div>
-
-      <div class="lockin-stats">
-        <div class="lockin-stat">
-          <div class="lockin-stat-value" id="lockin-tiers-active">3/6</div>
-          <div class="lockin-stat-label">Tiers Active</div>
-        </div>
-        <div class="lockin-stat">
-          <div class="lockin-stat-value" style="color:var(--growth-engine)" id="lockin-annual-value">$565/yr</div>
-          <div class="lockin-stat-label">Annual Value Locked</div>
-        </div>
-        <div class="lockin-stat">
-          <div class="lockin-stat-value" style="color:var(--negative)" id="lockin-migration-est">$55,000</div>
-          <div class="lockin-stat-label">Est. Migration Cost</div>
+        <div class="lockin-side-col">
+          <div class="lockin-depth-meter">
+            <div class="depth-meter-title">ROOT DEPTH</div>
+            <div class="depth-meter-track">
+              <div class="depth-meter-fill" id="lockin-depth-fill"></div>
+              <div class="depth-meter-markers" id="lockin-depth-markers"></div>
+            </div>
+            <div class="depth-meter-score"><span id="lockin-score">0</span><span class="depth-meter-max">/10</span></div>
+            <div class="depth-meter-label" id="lockin-gauge-label">No Roots</div>
+          </div>
+          <div class="lockin-side-stats">
+            <div class="lockin-side-stat">
+              <div class="lockin-side-stat-value" id="lockin-tiers-active">0/6</div>
+              <div class="lockin-side-stat-label">Tiers</div>
+            </div>
+            <div class="lockin-side-stat">
+              <div class="lockin-side-stat-value" style="color:var(--growth-engine)" id="lockin-annual-value">$0</div>
+              <div class="lockin-side-stat-label">Value/yr</div>
+            </div>
+            <div class="lockin-side-stat">
+              <div class="lockin-side-stat-value" style="color:var(--negative)" id="lockin-migration-est">$0</div>
+              <div class="lockin-side-stat-label">Migration</div>
+            </div>
+          </div>
+          <div class="lockin-narrative-compact" id="lockin-narrative"></div>
         </div>
       </div>
     </div>
