@@ -545,51 +545,50 @@
     <div class="lockin-container">
       <div class="lockin-hero">
         <h2>The Growth Engine Lock-In Effect</h2>
-        <p class="lockin-thesis">Each tier grows roots deeper into the merchant's operations. By Tier 5, uprooting means
+        <p class="lockin-thesis">Each tier grows Woo's ecosystem roots deeper into the merchant's operations. By Tier 5, uprooting means
           a 6-figure infrastructure demolition. By Tier 6, leaving is economically irrational.</p>
       </div>
 
-      <div class="lockin-tier-selector" id="lockin-tier-selector">
-        <button class="tier-btn active" data-tier="0"><span class="tier-btn-label">None</span><span class="tier-btn-gmv">—</span></button>
-        <button class="tier-btn" data-tier="1"><span class="tier-btn-label">T1 WCPay</span><span class="tier-btn-gmv">$0</span></button>
-        <button class="tier-btn" data-tier="2"><span class="tier-btn-label">T2 AutomateWoo</span><span class="tier-btn-gmv">$50K</span></button>
-        <button class="tier-btn" data-tier="3"><span class="tier-btn-label">T3 Subs/CRM</span><span class="tier-btn-gmv">$100K</span></button>
-        <button class="tier-btn" data-tier="4"><span class="tier-btn-label">T4 Security</span><span class="tier-btn-gmv">$250K</span></button>
-        <button class="tier-btn" data-tier="5"><span class="tier-btn-label">T5 Hosting</span><span class="tier-btn-gmv">$500K</span></button>
-        <button class="tier-btn" data-tier="6"><span class="tier-btn-label">T6 Custom</span><span class="tier-btn-gmv">$1M+</span></button>
+      <div class="lockin-top-row">
+        <div class="lockin-tier-selector" id="lockin-tier-selector">
+          <button class="tier-btn active" data-tier="0"><span class="tier-btn-label">None</span><span class="tier-btn-gmv">-</span></button>
+          <button class="tier-btn" data-tier="1"><span class="tier-btn-label">T1 WCPay</span><span class="tier-btn-gmv">$0</span></button>
+          <button class="tier-btn" data-tier="2"><span class="tier-btn-label">T2 AutomateWoo</span><span class="tier-btn-gmv">$50K</span></button>
+          <button class="tier-btn" data-tier="3"><span class="tier-btn-label">T3 Subs/CRM</span><span class="tier-btn-gmv">$100K</span></button>
+          <button class="tier-btn" data-tier="4"><span class="tier-btn-label">T4 Security</span><span class="tier-btn-gmv">$250K</span></button>
+          <button class="tier-btn" data-tier="5"><span class="tier-btn-label">T5 Hosting</span><span class="tier-btn-gmv">$500K</span></button>
+          <button class="tier-btn" data-tier="6"><span class="tier-btn-label">T6 Custom</span><span class="tier-btn-gmv">$1M+</span></button>
+        </div>
       </div>
 
       <div class="lockin-main">
-        <div class="lockin-tree-col">
-          <div class="lockin-tree-frame">
-            <img src="WooTree.jpeg" alt="Growth Engine Lock-In Tree" id="lockin-tree-img" class="lockin-tree-img">
+        <div class="lockin-depth-bar">
+          <div class="depth-bar-title">EXTRACTION<br>COST</div>
+          <div class="depth-bar-track">
+            <div class="depth-bar-fill" id="lockin-depth-fill"></div>
+            <div class="depth-bar-markers" id="lockin-depth-markers"></div>
           </div>
+          <div class="depth-bar-score"><span id="lockin-score">0</span><span class="depth-bar-max">/10</span></div>
+          <div class="depth-bar-label" id="lockin-gauge-label">No Roots</div>
         </div>
-        <div class="lockin-side-col">
-          <div class="lockin-depth-meter">
-            <div class="depth-meter-title">ROOT DEPTH</div>
-            <div class="depth-meter-track">
-              <div class="depth-meter-fill" id="lockin-depth-fill"></div>
-              <div class="depth-meter-markers" id="lockin-depth-markers"></div>
-            </div>
-            <div class="depth-meter-score"><span id="lockin-score">0</span><span class="depth-meter-max">/10</span></div>
-            <div class="depth-meter-label" id="lockin-gauge-label">No Roots</div>
+        <div class="lockin-tree-frame">
+          <img src="WooTree.jpeg" alt="Growth Engine Lock-In Tree" id="lockin-tree-img" class="lockin-tree-img">
+        </div>
+        <div class="lockin-tier-labels" id="lockin-tier-labels"></div>
+        <div class="lockin-narrative-compact" id="lockin-narrative"></div>
+        <div class="lockin-side-stats">
+          <div class="lockin-side-stat">
+            <div class="lockin-side-stat-value" id="lockin-tiers-active">0/6</div>
+            <div class="lockin-side-stat-label">Tiers</div>
           </div>
-          <div class="lockin-side-stats">
-            <div class="lockin-side-stat">
-              <div class="lockin-side-stat-value" id="lockin-tiers-active">0/6</div>
-              <div class="lockin-side-stat-label">Tiers</div>
-            </div>
-            <div class="lockin-side-stat">
-              <div class="lockin-side-stat-value" style="color:var(--growth-engine)" id="lockin-annual-value">$0</div>
-              <div class="lockin-side-stat-label">Value/yr</div>
-            </div>
-            <div class="lockin-side-stat">
-              <div class="lockin-side-stat-value" style="color:var(--negative)" id="lockin-migration-est">$0</div>
-              <div class="lockin-side-stat-label">Migration</div>
-            </div>
+          <div class="lockin-side-stat">
+            <div class="lockin-side-stat-value" style="color:var(--growth-engine)" id="lockin-annual-value">$0</div>
+            <div class="lockin-side-stat-label">Value/yr</div>
           </div>
-          <div class="lockin-narrative-compact" id="lockin-narrative"></div>
+          <div class="lockin-side-stat">
+            <div class="lockin-side-stat-value" style="color:var(--negative)" id="lockin-migration-est">$0</div>
+            <div class="lockin-side-stat-label">Migration</div>
+          </div>
         </div>
       </div>
     </div>
@@ -620,7 +619,7 @@
   <script src="tabs/playbook.js"></script>
   <script src="tabs/csm.js"></script>
   <script src="tabs/roi.js"></script>
-  <script src="tabs/lockin.js"></script>
+  <script src="tabs/lockin.js?v=8"></script>
 </body>
 
 </html>

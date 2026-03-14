@@ -1578,39 +1578,44 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* ========== GE STRATEGY LOCK-IN TREE ========== */
 .lockin-container {
-    max-width: 960px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 12px 20px;
 }
 
 .lockin-hero {
     text-align: center;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .lockin-hero h2 {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     background: linear-gradient(135deg, #FF6B35, #F87171, #7F54B3);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
 }
 
 .lockin-thesis {
     color: var(--text-secondary);
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     line-height: 1.5;
     max-width: 600px;
     margin: 0 auto;
 }
 
+/* Top row: tier selector centered */
+.lockin-top-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
 /* Tier Selector Buttons */
 .lockin-tier-selector {
     display: flex;
-    gap: 4px;
-    margin-bottom: 12px;
-    justify-content: center;
+    gap: 5px;
     flex-wrap: wrap;
 }
 
@@ -1618,13 +1623,13 @@ input[type="range"]::-webkit-slider-thumb {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 6px 10px;
+    padding: 5px 8px;
     background: var(--bg-card);
     border: 1.5px solid var(--border);
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.3s;
-    min-width: 80px;
+    min-width: 72px;
 }
 
 .tier-btn:hover {
@@ -1639,99 +1644,100 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .tier-btn-label {
-    font-size: 0.6rem;
+    font-size: 0.55rem;
     font-weight: 700;
     color: var(--text-primary);
     white-space: nowrap;
 }
 
 .tier-btn-gmv {
-    font-size: 0.55rem;
+    font-size: 0.5rem;
     color: var(--text-muted);
     margin-top: 1px;
 }
 
-/* Two-column main layout */
-.lockin-main {
-    display: grid;
-    grid-template-columns: 55% 45%;
-    gap: 16px;
-    align-items: start;
+/* Stats: stacked vertically next to tier selector */
+.lockin-side-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-shrink: 0;
 }
 
-.lockin-tree-col {
+.lockin-side-stat {
     display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    white-space: nowrap;
+}
+
+.lockin-side-stat-value {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.lockin-side-stat-label {
+    font-size: 0.45rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Main layout: flat flex row */
+.lockin-main {
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
     justify-content: center;
 }
 
-.lockin-tree-frame {
-    position: relative;
-    overflow: hidden;
-    border-radius: 10px;
-    max-width: 360px;
-}
-
-.lockin-tree-img {
-    width: 100%;
-    display: block;
-    transition: clip-path 0.6s ease;
-    clip-path: inset(0 0 75% 0);
-}
-
-.lockin-woo-logo {
-    position: absolute;
-    top: 3%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 50px;
-    opacity: 0.6;
-    filter: drop-shadow(0 0 10px rgba(135, 62, 255, 0.4));
-    pointer-events: none;
-}
-
-/* Side column */
-.lockin-side-col {
+/* ===== Depth Bar (left of tree, starts at ground level) ===== */
+.lockin-depth-bar {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    align-items: center;
+    flex-shrink: 0;
+    /* paddingTop set dynamically by JS to align with ground level */
 }
 
-/* Vertical Depth Meter */
-.lockin-depth-meter {
-    text-align: center;
-}
-
-.depth-meter-title {
-    font-size: 0.55rem;
-    font-weight: 700;
+.depth-bar-title {
+    font-size: 0.4rem;
+    font-weight: 800;
     color: var(--text-muted);
-    letter-spacing: 1.5px;
-    margin-bottom: 6px;
+    letter-spacing: 1px;
+    text-align: center;
+    line-height: 1.3;
+    margin-bottom: 3px;
+    white-space: nowrap;
 }
 
-.depth-meter-track {
+.depth-bar-track {
     position: relative;
-    width: 24px;
-    height: 200px;
-    margin: 0 auto;
+    width: 16px;
+    /* height set dynamically by JS to match root zone */
     background: rgba(45, 33, 69, 0.5);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 8px;
     overflow: hidden;
 }
 
-.depth-meter-fill {
+.depth-bar-fill {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 0%;
-    border-radius: 12px;
+    border-radius: 8px;
     transition: all 0.6s ease;
     background: linear-gradient(180deg, #4ADE80, #60A5FA);
 }
 
-.depth-meter-markers {
+.depth-bar-markers {
     position: absolute;
     top: 0;
     left: 0;
@@ -1745,7 +1751,7 @@ input[type="range"]::-webkit-slider-thumb {
     transform: translateY(-50%);
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
     opacity: 0.2;
     transition: all 0.4s;
 }
@@ -1755,64 +1761,103 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .depth-marker-line {
-    width: 8px;
+    width: 5px;
     height: 2px;
     display: block;
 }
 
 .depth-marker-val {
-    font-size: 0.6rem;
+    font-size: 0.45rem;
     font-weight: 800;
 }
 
-.depth-meter-score {
-    margin-top: 8px;
-    font-size: 1.8rem;
+.depth-bar-score {
+    margin-top: 4px;
+    font-size: 1.1rem;
     font-weight: 800;
     color: var(--text-primary);
     line-height: 1;
-}
-
-.depth-meter-max {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    font-weight: 600;
-}
-
-.depth-meter-label {
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    font-weight: 600;
-    margin-top: 2px;
-}
-
-/* Side Stats */
-.lockin-side-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-}
-
-.lockin-side-stat {
     text-align: center;
-    padding: 8px 4px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 6px;
 }
 
-.lockin-side-stat-value {
-    font-size: 0.85rem;
+.depth-bar-max {
+    font-size: 0.5rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.depth-bar-label {
+    font-size: 0.42rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 1px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* ===== Tree Image ===== */
+.lockin-tree-frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    width: 280px;
+    flex-shrink: 0;
+}
+
+.lockin-tree-img {
+    width: 100%;
+    display: block;
+    transition: clip-path 0.6s ease;
+    clip-path: inset(0 0 72% 0);
+}
+
+/* ===== Tier Script Labels (right of tree) ===== */
+.lockin-tier-labels {
+    position: relative;
+    width: 180px;
+    margin-right: -180px;
+    overflow: visible;
+    flex-shrink: 0;
+    z-index: 2;
+}
+
+.tier-label {
+    position: absolute;
+    left: 0;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+    opacity: 0.15;
+    transition: opacity 0.4s, transform 0.4s;
+    max-width: 180px;
+}
+
+.tier-label.active {
+    opacity: 1;
+}
+
+.tier-label-tag {
+    font-size: 0.45rem;
     font-weight: 800;
+    border: 1.5px solid;
+    border-radius: 3px;
+    padding: 1px 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.tier-label-text {
+    font-size: 0.5rem;
+    color: var(--text-secondary);
+    line-height: 1.3;
+    font-style: italic;
+}
+
+.tier-label.active .tier-label-text {
     color: var(--text-primary);
 }
 
-.lockin-side-stat-label {
-    font-size: 0.5rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
 
 /* Compact Narrative */
 .lockin-narrative-compact {
@@ -1820,6 +1865,9 @@ input[type="range"]::-webkit-slider-thumb {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 6px;
+    max-width: 260px;
+    margin-left: -40px;
+    z-index: 1;
 }
 
 .lockin-narrative-header {
@@ -1827,25 +1875,27 @@ input[type="range"]::-webkit-slider-thumb {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 4px;
+    gap: 8px;
 }
 
 .lockin-narrative-title {
     font-weight: 700;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--text-primary);
 }
 
 .lockin-narrative-risk {
-    font-size: 0.5rem;
+    font-size: 0.45rem;
     font-weight: 700;
     letter-spacing: 0.5px;
-    padding: 2px 6px;
+    padding: 2px 5px;
     border-radius: 3px;
     background: rgba(255, 255, 255, 0.04);
+    white-space: nowrap;
 }
 
 .lockin-narrative-text {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     color: var(--text-secondary);
     line-height: 1.45;
     margin: 0;
