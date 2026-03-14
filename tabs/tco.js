@@ -3,7 +3,7 @@ const PLANS = { basic: { name: 'Basic', monthly: 39, rate: 0.029, gatewayFee: 0.
 const GE_EQUIV = [{ gmv: 50000, mo: 100 }, { gmv: 100000, mo: 99 }, { gmv: 250000, mo: 0 }, { gmv: 500000, mo: 100 }, { gmv: 1000000, mo: 0 }];
 
 let currentGMV = 500000, currentPlan = 'advanced', costChart = null, paybackChart = null;
-let manualPlan = false, manualWooDev = false, manualShopifyDev = false, manualWooApps = false;
+let manualPlan = false, manualWooDev = false, manualShopifyDev = false, manualShopifyApps = false, manualWooApps = false;
 
 function snapGMV(g) { if (g >= 20000000) return Math.round(g / 1000000) * 1000000; if (g >= 1000000) return Math.round(g / 100000) * 100000; return Math.round(g / 50000) * 50000; }
 function s2g(v) { const mn = Math.log(50000), mx = Math.log(50000000); return snapGMV(Math.round(Math.exp(mn + (v / 100) * (mx - mn)))) }
@@ -13,23 +13,26 @@ function fmtF(v) { return '$' + Math.round(v).toLocaleString() }
 function defWooDev(g) { if (g < 1e5) return 500; if (g < 5e5) return 1500; if (g < 2e6) return 2500; if (g < 1e7) return 4000; return 5000 }
 function defWooApps(g) { if (g < 1e5) return 50; if (g < 5e5) return 100; if (g < 2e6) return 200; return 300 }
 function geAppCost(g) { let t = 0; GE_EQUIV.forEach(e => { if (g >= e.gmv) t += e.mo }); return t }
-function defShopifyDev(g) { let b = 250; if (g >= 1e5) b = 500; if (g >= 5e5) b = 750; if (g >= 2e6) b = 1250; if (g >= 1e7) b = 2000; return b + geAppCost(g) }
+function defShopifyDevOnly(g) { let b = 250; if (g >= 1e5) b = 500; if (g >= 5e5) b = 750; if (g >= 2e6) b = 1250; if (g >= 1e7) b = 2000; return b }
+function defShopifyApps(g) { return geAppCost(g) }
+function defShopifyDev(g) { return defShopifyDevOnly(g) + defShopifyApps(g) }
 function bestPlan(g) { if (g < 264000) return 'basic'; if (g < 1760000) return 'grow'; return 'advanced' }
 function getSS(g) { if (g >= 1e6) return 10; if (g >= 5e5) return 9; if (g >= 25e4) return 7; if (g >= 1e5) return 6; if (g >= 5e4) return 4; return 2 }
 function getMC(g, s) { let b = 8000; if (g >= 1e5) b = 2e4; if (g >= 25e4) b = 35000; if (g >= 5e5) b = 55000; if (g >= 1e6) b = 1e5; if (g >= 5e6) b = 175000; if (g >= 1e7) b = 3e5; return Math.round(b * (s / 10)) }
 function calcWoo(g, dM, aM, ge) { let h = g < 1e5 ? 2400 : g < 5e5 ? 4200 : 6000, sec = g < 25e4 ? 1200 : 2400, d = dM * 12, a = aM * 12, r = 0.029; if (ge) { if (g >= 5e4) a = Math.max(0, a - 99); if (g >= 1e5) a = Math.max(0, a - 279); if (g >= 25e4) sec = 0; if (g >= 5e5) { h = 0; a = Math.max(0, a - 1188) } if (g >= 1e6) r = 0.025 } const p = g * r; return { platform: 0, payments: p, hosting: h, security: sec, dev: d, apps: Math.max(0, a), total: p + h + sec + d + Math.max(0, a) } }
-function calcShopify(g, plan, dM, gw) { const p = PLANS[plan]; let pB = p.monthly * 12, pC = pB, vF = 0; if (p.variable && g > p.variableFloor) { const va = g * p.variableRate; if (va > pB) { vF = va - pB; pC = va } } const spG = g * (1 - gw / 100), tpG = g * (gw / 100), sp = spG * p.rate, tp = tpG * 0.029, ts = tpG * p.gatewayFee; let devBase = 250; if (g >= 1e5) devBase = 500; if (g >= 5e5) devBase = 750; if (g >= 2e6) devBase = 1250; if (g >= 1e7) devBase = 2000; const devOnly = devBase * 12; const appsCost = geAppCost(g) * 12; const d = dM * 12; return { platform: pB, spCost: sp, tpCost: tp, surcharge: ts, variable: vF, devOnly, appsCost, dev: d, total: pC + sp + tp + ts + d } }
+function calcShopify(g, plan, devMo, appsMo, gw) { const p = PLANS[plan]; let pB = p.monthly * 12, pC = pB, vF = 0; if (p.variable && g > p.variableFloor) { const va = g * p.variableRate; if (va > pB) { vF = va - pB; pC = va } } const spG = g * (1 - gw / 100), tpG = g * (gw / 100), sp = spG * p.rate, tp = tpG * 0.029, ts = tpG * p.gatewayFee; const devOnly = devMo * 12; const appsCost = appsMo * 12; return { platform: pB, spCost: sp, tpCost: tp, surcharge: ts, variable: vF, devOnly, appsCost, total: pC + sp + tp + ts + devOnly + appsCost } }
 
 function tcoUpdate() {
     currentGMV = s2g(document.getElementById('gmv-slider').value);
     document.getElementById('gmv-display').textContent = fmt(currentGMV);
     if (!manualWooDev) { const d = defWooDev(currentGMV); document.getElementById('woo-dev-slider').value = d; document.getElementById('woo-dev-display').textContent = fmtF(d) + '/mo'; document.getElementById('woo-dev-auto').style.display = 'inline-block' }
     if (!manualWooApps) { const a = defWooApps(currentGMV); document.getElementById('woo-apps-slider').value = a; document.getElementById('woo-apps-display').textContent = '$' + a + '/mo'; document.getElementById('woo-apps-auto').style.display = 'inline-block' }
-    if (!manualShopifyDev) { const d = defShopifyDev(currentGMV); document.getElementById('shopify-dev-slider').value = Math.min(d, 4000); document.getElementById('shopify-dev-display').textContent = fmtF(d) + '/mo'; document.getElementById('shopify-dev-auto').style.display = 'inline-block' }
+    if (!manualShopifyDev) { const d = defShopifyDevOnly(currentGMV); document.getElementById('shopify-dev-slider').value = Math.min(d, 3000); document.getElementById('shopify-dev-display').textContent = fmtF(d) + '/mo'; document.getElementById('shopify-dev-auto').style.display = 'inline-block' }
+    if (!manualShopifyApps) { const a = defShopifyApps(currentGMV); document.getElementById('shopify-apps-slider').value = Math.min(a, 500); document.getElementById('shopify-apps-display').textContent = fmtF(a) + '/mo'; document.getElementById('shopify-apps-auto').style.display = 'inline-block' }
     if (!manualPlan) { const b = bestPlan(currentGMV); currentPlan = b; document.querySelectorAll('#shopify-plan-toggle .toggle-btn').forEach(x => x.classList.toggle('active', x.dataset.plan === b)); document.getElementById('plan-auto').style.display = 'inline-block'; document.getElementById('plan-auto-label').textContent = 'Most economical at this GMV' }
-    const wD = parseInt(document.getElementById('woo-dev-slider').value), wA = parseInt(document.getElementById('woo-apps-slider').value), sD = parseInt(document.getElementById('shopify-dev-slider').value), gw = parseInt(document.getElementById('gateway-slider').value);
+    const wD = parseInt(document.getElementById('woo-dev-slider').value), wA = parseInt(document.getElementById('woo-apps-slider').value), sD = parseInt(document.getElementById('shopify-dev-slider').value), sA = parseInt(document.getElementById('shopify-apps-slider').value), gw = parseInt(document.getElementById('gateway-slider').value);
     document.getElementById('gateway-display').textContent = gw + '%';
-    const woo = calcWoo(currentGMV, wD, wA, false), ge = calcWoo(currentGMV, wD, wA, true), shop = calcShopify(currentGMV, currentPlan, sD, gw);
+    const woo = calcWoo(currentGMV, wD, wA, false), ge = calcWoo(currentGMV, wD, wA, true), shop = calcShopify(currentGMV, currentPlan, sD, sA, gw);
     document.getElementById('woo-total').textContent = fmtF(woo.total); document.getElementById('woo-payments').textContent = fmtF(woo.payments); document.getElementById('woo-hosting').textContent = fmtF(woo.hosting); document.getElementById('woo-security').textContent = fmtF(woo.security); document.getElementById('woo-dev').textContent = fmtF(woo.dev); document.getElementById('woo-apps').textContent = fmtF(woo.apps);
     document.getElementById('wooge-total').textContent = fmtF(ge.total); document.getElementById('wooge-payments').textContent = fmtF(ge.payments); document.getElementById('wooge-dev').textContent = fmtF(ge.dev);
     ['wooge-hosting', 'wooge-security', 'wooge-apps'].forEach(id => { const el = document.getElementById(id); const v = id === 'wooge-hosting' ? ge.hosting : id === 'wooge-security' ? ge.security : ge.apps; if (v === 0) { el.textContent = 'Free \u2713'; el.classList.add('free') } else { el.textContent = fmtF(v); el.classList.remove('free') } });
@@ -49,7 +52,7 @@ function tcoUpdate() {
 
 function updateCostChart() {
     const pts = [], w = [], ge = [], s = [];
-    for (let g = 5e4; g <= 5e7; g *= 1.2) { const gv = Math.round(g); pts.push(gv); w.push(calcWoo(gv, defWooDev(gv), defWooApps(gv), false).total); ge.push(calcWoo(gv, defWooDev(gv), defWooApps(gv), true).total); s.push(calcShopify(gv, bestPlan(gv), defShopifyDev(gv), 20).total) }
+    for (let g = 5e4; g <= 5e7; g *= 1.2) { const gv = Math.round(g); pts.push(gv); w.push(calcWoo(gv, defWooDev(gv), defWooApps(gv), false).total); ge.push(calcWoo(gv, defWooDev(gv), defWooApps(gv), true).total); s.push(calcShopify(gv, bestPlan(gv), defShopifyDevOnly(gv), defShopifyApps(gv), 20).total) }
     const lb = pts.map(g => fmt(g)); const chartOpts = { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1A1229', borderColor: '#2D2145', borderWidth: 1, titleColor: '#F5F0FF', bodyColor: '#A89CC8', padding: 10, callbacks: { title: i => 'GMV: ' + i[0].label, label: i => i.dataset.label + ': ' + fmtF(i.raw) } } }, scales: { x: { grid: { color: 'rgba(45,33,69,0.4)' }, ticks: { color: '#6B5F82', font: { size: 9 }, maxTicksLimit: 6 } }, y: { grid: { color: 'rgba(45,33,69,0.4)' }, ticks: { color: '#6B5F82', font: { size: 9 }, callback: v => fmt(v) } } } };
     if (costChart) { costChart.data.labels = lb; costChart.data.datasets[0].data = w; costChart.data.datasets[1].data = ge; costChart.data.datasets[2].data = s; costChart.update('none'); return }
     costChart = new Chart(document.getElementById('cost-chart').getContext('2d'), { type: 'line', data: { labels: lb, datasets: [{ label: 'WooCommerce', data: w, borderColor: '#873EFF', borderWidth: 2, pointRadius: 0, tension: 0.3, fill: false }, { label: 'Woo + GE', data: ge, borderColor: '#FF6B35', borderWidth: 3, pointRadius: 0, tension: 0.3, fill: false }, { label: 'Shopify', data: s, borderColor: '#96BF48', borderWidth: 2, pointRadius: 0, tension: 0.3, fill: false, borderDash: [6, 3] }] }, options: chartOpts });
@@ -62,10 +65,11 @@ function updatePaybackChart(mc, diff) {
 }
 
 // TCO Event Listeners
-document.getElementById('gmv-slider').addEventListener('input', () => { manualPlan = false; manualWooDev = false; manualShopifyDev = false; manualWooApps = false; tcoUpdate() });
+document.getElementById('gmv-slider').addEventListener('input', () => { manualPlan = false; manualWooDev = false; manualShopifyDev = false; manualShopifyApps = false; manualWooApps = false; tcoUpdate() });
 document.getElementById('woo-dev-slider').addEventListener('input', function () { manualWooDev = true; document.getElementById('woo-dev-auto').style.display = 'none'; document.getElementById('woo-dev-display').textContent = fmtF(parseInt(this.value)) + '/mo'; tcoUpdate() });
 document.getElementById('woo-apps-slider').addEventListener('input', function () { manualWooApps = true; document.getElementById('woo-apps-auto').style.display = 'none'; document.getElementById('woo-apps-display').textContent = '$' + this.value + '/mo'; tcoUpdate() });
 document.getElementById('shopify-dev-slider').addEventListener('input', function () { manualShopifyDev = true; document.getElementById('shopify-dev-auto').style.display = 'none'; document.getElementById('shopify-dev-display').textContent = fmtF(parseInt(this.value)) + '/mo'; tcoUpdate() });
+document.getElementById('shopify-apps-slider').addEventListener('input', function () { manualShopifyApps = true; document.getElementById('shopify-apps-auto').style.display = 'none'; document.getElementById('shopify-apps-display').textContent = fmtF(parseInt(this.value)) + '/mo'; tcoUpdate() });
 document.getElementById('gateway-slider').addEventListener('input', tcoUpdate);
 document.querySelectorAll('#shopify-plan-toggle .toggle-btn').forEach(btn => { btn.addEventListener('click', function () { manualPlan = true; document.querySelectorAll('#shopify-plan-toggle .toggle-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); currentPlan = this.dataset.plan; document.getElementById('plan-auto').style.display = 'none'; document.getElementById('plan-auto-label').textContent = this.dataset.plan === 'plus' ? 'Plus is a feature upgrade, not cost savings vs Advanced' : 'Manually selected'; tcoUpdate() }) });
 
