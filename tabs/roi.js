@@ -62,11 +62,41 @@ const ADOPTION_CURVES = [
 let wcpayChart = null, churnChart = null, stickinessChartInst = null, adoptionChart = null, shopifyTierChart = null;
 let geToggleOn = false;
 
+function rateColor(pct) {
+    if (pct >= 40) return 'var(--positive)';
+    if (pct >= 20) return 'var(--growth-engine)';
+    if (pct >= 10) return 'var(--warning)';
+    return 'var(--text-muted)';
+}
+
+function renderTierGrids(enrollMult, churnMult) {
+    const enrollGrid = document.getElementById('enrollment-tier-grid');
+    const churnGrid = document.getElementById('churn-tier-grid');
+    if (!enrollGrid || !churnGrid) return;
+
+    const tiers = ROI_TIERS.filter(t => !t.chartOnly && t.baseEnroll > 0);
+
+    enrollGrid.innerHTML = '<div class="roi-tier-header"><span>Tier</span><span>Base</span><span>Adjusted</span></div>' +
+        tiers.map(t => {
+            const adj = Math.min(100, Math.round(t.baseEnroll * enrollMult));
+            return `<div class="roi-tier-row"><span>${t.gmv}</span><span style="color:var(--text-muted)">${t.baseEnroll}%</span><span style="color:${rateColor(adj)};font-weight:600">${adj}%</span></div>`;
+        }).join('');
+
+    churnGrid.innerHTML = '<div class="roi-tier-header"><span>Tier</span><span>Base</span><span>Adjusted</span></div>' +
+        tiers.map(t => {
+            const adj = Math.min(100, Math.round(t.churnSaved * churnMult));
+            return `<div class="roi-tier-row"><span>${t.gmv}</span><span style="color:var(--text-muted)">${t.churnSaved}%</span><span style="color:${rateColor(adj)};font-weight:600">${adj}%</span></div>`;
+        }).join('');
+}
+
 function roiUpdate() {
     const enrollMult = parseInt(document.getElementById('roi-enrollment-slider').value) / 100;
     const churnMult = parseInt(document.getElementById('roi-churn-slider').value) / 100;
     document.getElementById('roi-enrollment-display').textContent = enrollMult.toFixed(2) + 'x';
     document.getElementById('roi-churn-display').textContent = churnMult.toFixed(2) + 'x';
+
+    // Render tier breakdown grids
+    renderTierGrids(enrollMult, churnMult);
 
     let totalAtRisk = 0, totalRevSaved = 0, totalProgramCost = 0, totalOppCost = 0;
 
@@ -103,6 +133,8 @@ function roiUpdate() {
             <div class="roi-stat-label has-tooltip">Opp Cost (foregone rev)<span class="tooltip-text">Retail revenue Automattic gives up by providing products free: AutomateWoo ($99/yr), WC Subscriptions ($279/yr), Jetpack Security ($240/yr), Pressable ($540/yr), Metorik ($600/yr). Counted at full retail price to be conservative, though most merchants likely would not have purchased at retail.</span></div>
         </div>
     `;
+
+    updateShopifyTierChart(churnMult);
 }
 
 function initWCPayChart() {
@@ -240,18 +272,32 @@ function initAdoptionChart() {
 
 function initShopifyTierChart() {
     const data = CHURN_DATA.shopifyByTier;
+    // Churn save rate scales with tier (higher GMV = more GE value = more saveable)
+    const tierSaveRates = [0.05, 0.10, 0.15, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50];
+
     shopifyTierChart = new Chart(document.getElementById('shopify-tier-chart').getContext('2d'), {
         type: 'bar',
         data: {
             labels: data.map(d => d.tier),
             datasets: [
                 {
-                    label: 'Merchants Leaving',
+                    label: 'Merchants Saved',
+                    data: data.map(() => 0),
+                    backgroundColor: 'rgba(74,222,128,0.6)',
+                    borderColor: '#4ADE80',
+                    borderWidth: 1,
+                    borderRadius: { topLeft: 4, topRight: 4 },
+                    stack: 'merchants',
+                    yAxisID: 'y'
+                },
+                {
+                    label: 'Still Leaving',
                     data: data.map(d => d.merchants),
                     backgroundColor: 'rgba(248,113,113,0.6)',
                     borderColor: '#F87171',
                     borderWidth: 1,
-                    borderRadius: 4,
+                    borderRadius: { topLeft: 4, topRight: 4 },
+                    stack: 'merchants',
                     yAxisID: 'y'
                 },
                 {
@@ -264,6 +310,18 @@ function initShopifyTierChart() {
                     tension: 0.3,
                     fill: false,
                     yAxisID: 'y1'
+                },
+                {
+                    label: 'GMV Saved',
+                    data: data.map(() => 0),
+                    type: 'line',
+                    borderColor: '#4ADE80',
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    tension: 0.3,
+                    fill: false,
+                    borderDash: [4, 3],
+                    yAxisID: 'y1'
                 }
             ]
         },
@@ -271,15 +329,38 @@ function initShopifyTierChart() {
             responsive: true, maintainAspectRatio: false,
             plugins: {
                 legend: { labels: { color: '#8b8fa8', font: { size: 10 } } },
-                tooltip: { callbacks: { label: i => i.datasetIndex === 0 ? i.raw + ' merchants' : 'GMV at risk: ' + fmt(i.raw) } }
+                tooltip: { callbacks: { label: i => {
+                    if (i.datasetIndex <= 1) return i.dataset.label + ': ' + i.raw + ' merchants';
+                    return i.dataset.label + ': ' + fmt(i.raw);
+                } } }
             },
             scales: {
-                x: { grid: { display: false }, ticks: { color: '#6B5F82', font: { size: 8 } } },
-                y: { position: 'left', grid: { color: 'rgba(45,33,69,0.4)' }, title: { display: true, text: 'Merchants', color: '#6B5F82', font: { size: 9 } }, ticks: { color: '#6B5F82', font: { size: 9 } } },
+                x: { grid: { display: false }, ticks: { color: '#6B5F82', font: { size: 8 } }, stacked: true },
+                y: { position: 'left', stacked: true, grid: { color: 'rgba(45,33,69,0.4)' }, title: { display: true, text: 'Merchants', color: '#6B5F82', font: { size: 9 } }, ticks: { color: '#6B5F82', font: { size: 9 } } },
                 y1: { position: 'right', grid: { display: false }, title: { display: true, text: 'GMV at Risk', color: '#6B5F82', font: { size: 9 } }, ticks: { color: '#6B5F82', font: { size: 9 }, callback: v => fmt(v) } }
             }
         }
     });
+
+    // Store save rates for updates
+    shopifyTierChart._tierSaveRates = tierSaveRates;
+}
+
+function updateShopifyTierChart(churnMult) {
+    if (!shopifyTierChart) return;
+    const data = CHURN_DATA.shopifyByTier;
+    const rates = shopifyTierChart._tierSaveRates;
+
+    data.forEach((d, i) => {
+        const saveRate = Math.min(1, rates[i] * churnMult);
+        const saved = Math.round(d.merchants * saveRate);
+        const leaving = d.merchants - saved;
+        shopifyTierChart.data.datasets[0].data[i] = saved;
+        shopifyTierChart.data.datasets[1].data[i] = leaving;
+        shopifyTierChart.data.datasets[2].data[i] = d.gmvAtRisk * (1 - saveRate); // GMV still at risk
+        shopifyTierChart.data.datasets[3].data[i] = d.gmvAtRisk * saveRate; // GMV saved
+    });
+    shopifyTierChart.update('none');
 }
 
 // Initialize all ROI charts
