@@ -36,19 +36,27 @@ const EXPANSION_SIGNALS = {
     ]
 };
 
+// Track manual overrides: if CSM manually checks/unchecks, don't auto-toggle
+const manualOverrides = new Set();
+let lastAutoGMV = 0;
+
 function initCSM() {
     const checkboxes = document.getElementById('csm-products');
     GE_PRODUCTS.forEach(p => {
         const label = document.createElement('label');
         label.className = 'csm-check';
+        label.dataset.productId = p.id;
+        label.dataset.minGmv = p.minGmv;
         const valueTag = p.annualValue > 0 ? ` <span style="font-size:0.6rem;color:var(--text-muted)">(${fmtF(p.annualValue)}/yr)</span>` : '';
         label.innerHTML = `
             <input type="checkbox" data-product="${p.id}" data-tier="${p.tier}">
             <span class="csm-check-icon">✓</span>
             <span>${p.name}${valueTag}</span>
+            <span class="csm-eligibility-tag" style="margin-left:auto;font-size:0.55rem;font-weight:600;padding:1px 5px;border-radius:3px"></span>
         `;
         label.addEventListener('click', function (e) {
             if (e.target.type !== 'checkbox') return;
+            manualOverrides.add(p.id);
             setTimeout(() => {
                 this.classList.toggle('active', e.target.checked);
                 csmUpdate();
@@ -57,13 +65,49 @@ function initCSM() {
         checkboxes.appendChild(label);
     });
 
-    document.getElementById('csm-gmv-slider').addEventListener('input', csmUpdate);
+    document.getElementById('csm-gmv-slider').addEventListener('input', () => { manualOverrides.clear(); csmUpdate(); });
     csmUpdate();
+}
+
+function syncProductCheckboxes(gmv) {
+    GE_PRODUCTS.forEach(p => {
+        const label = document.querySelector(`.csm-check[data-product-id="${p.id}"]`);
+        if (!label) return;
+        const cb = label.querySelector('input[type="checkbox"]');
+        const tag = label.querySelector('.csm-eligibility-tag');
+        const isEligible = gmv >= p.minGmv;
+
+        // Auto-check/uncheck only if not manually overridden
+        if (!manualOverrides.has(p.id)) {
+            cb.checked = isEligible;
+            label.classList.toggle('active', isEligible);
+        }
+
+        // Visual eligibility state
+        if (isEligible) {
+            label.classList.remove('ineligible');
+            tag.textContent = 'GE Eligible ✓';
+            tag.style.color = 'var(--positive)';
+            tag.style.background = 'rgba(74,222,128,0.1)';
+        } else {
+            label.classList.add('ineligible');
+            if (cb.checked) {
+                tag.textContent = 'Owned separately';
+                tag.style.color = 'var(--warning)';
+                tag.style.background = 'rgba(250,204,21,0.1)';
+            } else {
+                tag.textContent = `Unlocks at ${fmt(p.minGmv)}`;
+                tag.style.color = 'var(--text-muted)';
+                tag.style.background = 'rgba(85,90,117,0.1)';
+            }
+        }
+    });
 }
 
 function csmUpdate() {
     const gmv = s2g(document.getElementById('csm-gmv-slider').value);
     document.getElementById('csm-gmv-display').textContent = fmt(gmv);
+    syncProductCheckboxes(gmv);
 
     // Count active products and calculate values
     const activeProducts = [];
