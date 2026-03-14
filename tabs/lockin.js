@@ -1,7 +1,7 @@
 /* ========== GE STRATEGY: LOCK-IN TREE (Tab 6) ========== */
 
 const TREE_TIERS = [
-    { tier: 1, gmv: 0, name: 'WCPay', pct: 38, difficulty: 2, value: 0, color: '#4ADE80' },
+    { tier: 1, gmv: 0, name: 'WCPay', pct: 42, difficulty: 2, value: 0, color: '#4ADE80' },
     { tier: 2, gmv: 50000, name: 'AutomateWoo', pct: 50, difficulty: 4, value: 99, color: '#60A5FA' },
     { tier: 3, gmv: 100000, name: 'Subscriptions/CRM', pct: 62, difficulty: 6, value: 226, color: '#A78BFA' },
     { tier: 4, gmv: 250000, name: 'Jetpack Security', pct: 75, difficulty: 7, value: 240, color: '#FBBF24' },
