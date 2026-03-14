@@ -40,7 +40,7 @@ function tcoUpdate() {
     const diff = shop.total - ge.total, score = getSS(currentGMV), mc = getMC(currentGMV, score);
     const vS = document.getElementById('verdict-savings'), vT = document.getElementById('verdict-text'), vD = document.getElementById('verdict-detail');
     if (diff > 0) { vS.textContent = fmtF(Math.abs(diff)) + '/yr'; vS.className = 'savings-amount ge-wins'; vT.textContent = 'Woo + Growth Engine saves you'; vD.textContent = 'At ' + fmt(currentGMV) + ' GMV, Woo+GE costs ' + fmtF(Math.abs(diff)) + '/yr less than Shopify ' + PLANS[currentPlan].name }
-    else if (diff < 0) { const pb = Math.round(mc / Math.abs(diff) * 10) / 10; vS.textContent = fmtF(Math.abs(diff)) + '/yr'; vS.className = 'savings-amount shopify-wins'; vT.textContent = 'Shopify is cheaper by'; vD.textContent = 'But migration costs ~' + fmtF(mc) + '. Payback: ' + pb + ' years. Is it worth switching?' }
+    else if (diff < 0) { const pb = Math.round(mc / Math.abs(diff) * 10) / 10; vS.textContent = fmtF(Math.abs(diff)) + '/yr'; vS.className = 'savings-amount shopify-wins'; vT.textContent = 'Shopify is cheaper'; vD.textContent = 'But migration costs ~' + fmtF(mc) + '. Payback: ' + pb + ' years. Is it worth switching?' }
     else { vS.textContent = 'Break-even'; vS.className = 'savings-amount'; vT.textContent = 'Costs are roughly equal'; vD.textContent = '' }
     document.getElementById('switch-score').textContent = score + '/10'; document.getElementById('migration-cost').textContent = fmtF(mc);
     const fill = document.getElementById('switch-fill'); fill.style.width = (score * 10) + '%';
