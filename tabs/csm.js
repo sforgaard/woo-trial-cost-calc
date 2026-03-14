@@ -10,6 +10,52 @@ const GE_PRODUCTS = [
     { id: 'capital', name: 'WooCommerce Capital', tier: 6, minGmv: 1000000, annualValue: 0 }
 ];
 
+const CSM_TIERS = [
+    { tier: 1, gmv: 0, name: 'WCPay Setup', icon: '💳', products: ['WCPay'] },
+    { tier: 2, gmv: 50000, name: 'AutomateWoo', icon: '⚡', products: ['AutomateWoo'] },
+    { tier: 3, gmv: 100000, name: 'Subs/CRM', icon: '🔄', products: ['Subscriptions/CRM'] },
+    { tier: 4, gmv: 250000, name: 'Security', icon: '🛡️', products: ['Jetpack Security'] },
+    { tier: 5, gmv: 500000, name: 'Hosting+Analytics', icon: '🏗️', products: ['Pressable', 'Metorik'] },
+    { tier: 6, gmv: 1000000, name: 'Custom Rate', icon: '🏆', products: ['Custom WCPay', 'Capital'] }
+];
+
+function renderTierStrip(gmv) {
+    const strip = document.getElementById('csm-tier-strip');
+    const milestone = document.getElementById('csm-next-milestone');
+    if (!strip || !milestone) return;
+
+    const nextTier = CSM_TIERS.find(t => gmv < t.gmv);
+
+    // Next milestone banner
+    if (nextTier) {
+        const gap = nextTier.gmv - gmv;
+        milestone.innerHTML = `<span style="color:var(--info)">🎯</span> <strong>${fmt(gap)}</strong> away from <strong>Tier ${nextTier.tier}: ${nextTier.name}</strong> <span style="color:var(--text-muted)">(${nextTier.products.join(', ')})</span>`;
+        milestone.style.display = 'block';
+    } else {
+        milestone.innerHTML = '<span style="color:var(--positive)">🏆</span> <strong>All tiers unlocked!</strong> Full Growth Engine suite active.';
+        milestone.style.display = 'block';
+    }
+
+    // Tier strip
+    strip.innerHTML = CSM_TIERS.map(t => {
+        const unlocked = gmv >= t.gmv;
+        const isNext = nextTier && t.tier === nextTier.tier;
+        let stateClass = unlocked ? 'csm-tier-unlocked' : 'csm-tier-locked';
+        if (isNext) stateClass = 'csm-tier-next';
+
+        const pctToNext = isNext ? Math.round(((gmv - (CSM_TIERS[t.tier - 2]?.gmv || 0)) / (t.gmv - (CSM_TIERS[t.tier - 2]?.gmv || 0))) * 100) : 0;
+
+        return `<div class="csm-tier-item ${stateClass}">
+            <div class="csm-tier-num">T${t.tier}</div>
+            <div class="csm-tier-icon-sm">${t.icon}</div>
+            <div class="csm-tier-name-sm">${t.name}</div>
+            <div class="csm-tier-gmv-sm">${t.gmv === 0 ? '$0' : fmt(t.gmv)}</div>
+            ${isNext ? `<div class="csm-tier-progress-bar"><div style="width:${pctToNext}%"></div></div>` : ''}
+            ${unlocked ? '<div class="csm-tier-check">✓</div>' : ''}
+        </div>`;
+    }).join('');
+}
+
 const EXPANSION_SIGNALS = {
     50000: [
         { product: 'AutomateWoo', likelihood: 'high', reason: '7x adoption growth at this tier' },
@@ -108,6 +154,7 @@ function csmUpdate() {
     const gmv = s2g(document.getElementById('csm-gmv-slider').value);
     document.getElementById('csm-gmv-display').textContent = fmt(gmv);
     syncProductCheckboxes(gmv);
+    renderTierStrip(gmv);
 
     // Count active products and calculate values
     const activeProducts = [];

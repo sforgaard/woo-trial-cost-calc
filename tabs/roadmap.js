@@ -46,9 +46,12 @@ const GE_TIERS = [
 
 let roadmapChart = null;
 
+// Roadmap-specific slider: caps at $1.5M for better granularity in the tier range
+function s2gRoadmap(v) { const mn = Math.log(10000), mx = Math.log(1500000); return snapGMV(Math.round(Math.exp(mn + (v / 100) * (mx - mn)))) }
+
 function roadmapUpdate() {
     const slider = document.getElementById('roadmap-gmv-slider');
-    const gmv = s2g(slider.value);
+    const gmv = s2gRoadmap(slider.value);
     document.getElementById('roadmap-gmv-display').textContent = fmt(gmv);
 
     // Calculate total value unlocked
@@ -102,7 +105,7 @@ function roadmapUpdate() {
 }
 
 function updateRoadmapChart() {
-    const gmvLevels = [0, 50000, 100000, 250000, 500000, 1000000, 2000000];
+    const gmvLevels = [0, 50000, 100000, 250000, 500000, 1000000];
     const labels = gmvLevels.map(g => g === 0 ? '$0' : fmt(g));
     const cumValues = gmvLevels.map(g => {
         let total = 0;
@@ -123,8 +126,8 @@ function updateRoadmapChart() {
             datasets: [{
                 label: 'Annual GE Value',
                 data: cumValues,
-                backgroundColor: cumValues.map((_, i) => i < cumValues.length - 1 ? 'rgba(255,107,43,0.6)' : 'rgba(127,84,179,0.6)'),
-                borderColor: cumValues.map((_, i) => i < cumValues.length - 1 ? '#FF6B35' : '#7F54B3'),
+                backgroundColor: 'rgba(255,107,43,0.6)',
+                borderColor: '#FF6B35',
                 borderWidth: 1,
                 borderRadius: 6
             }]
