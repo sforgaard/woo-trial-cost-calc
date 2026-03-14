@@ -52,25 +52,44 @@ h3 {
 
 /* ========== HERO ========== */
 .hero {
-    background: var(--gradient-hero);
-    padding: 28px 20px 18px;
+    background: linear-gradient(135deg, #2d1054 0%, #1a0a3e 40%, #7f54b3 100%);
+    padding: 32px 24px 24px;
     text-align: center;
-    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 50%, rgba(135, 62, 255, 0.15) 0%, transparent 50%);
+    pointer-events: none;
 }
 
 .hero h1 {
-    font-size: 1.7rem;
+    font-size: 2rem;
     font-weight: 800;
-    background: linear-gradient(135deg, #7f54b3, #a78bfa);
+    letter-spacing: -0.03em;
+    margin-bottom: 4px;
+    position: relative;
+}
+
+.hero h1 span {
+    background: linear-gradient(90deg, #fff 0%, #d4b8f0 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
 .hero p {
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-    margin-top: 4px;
+    color: #d4b8f0;
+    font-size: 0.95rem;
+    position: relative;
+    opacity: 0.9;
 }
 
 /* ========== TAB NAVIGATION ========== */
