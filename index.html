@@ -40,6 +40,10 @@
       <span class="tab-icon">&#x1F4CA;</span>
       <span class="tab-label">ROI & Analytics</span>
     </button>
+    <button class="tab-btn" data-tab="lockin">
+      <span class="tab-icon">🕸️</span>
+      <span class="tab-label">GE Strategy</span>
+    </button>
   </nav>
 
   <!-- ==================== TAB 1: TCO CALCULATOR ==================== -->
@@ -404,7 +408,7 @@
             <div class="slider-label"><span></span><span class="slider-value" id="roadmap-gmv-display">$500,000</span>
             </div><input type="range" id="roadmap-gmv-slider" min="0" max="100" value="35" step="1">
             <div class="slider-ticks">
-              <span>$0</span><span>$250K</span><span>$500K</span><span>$1M</span><span>$5M+</span>
+              <span>$0</span><span>$100K</span><span>$250K</span><span>$500K</span><span>$1M+</span>
             </div>
           </div>
         </div>
@@ -448,6 +452,8 @@
             <input type="range" id="csm-gmv-slider" min="0" max="100" value="35" step="1">
             <div class="slider-ticks"><span>$50K</span><span>$500K</span><span>$5M</span><span>$50M</span></div>
           </div>
+          <div class="csm-next-milestone" id="csm-next-milestone"></div>
+          <div class="csm-tier-strip" id="csm-tier-strip"></div>
         </div>
         <div class="csm-input-group">
           <label>Active GE Products</label>
@@ -472,8 +478,12 @@
                   Baseline assumptions range from 5% (Tier 2) to 50% (Tier 6). At 0.5x, enrollment is halved (more
                   pessimistic). At 2.0x, enrollment doubles (more optimistic).</span></span><span class="slider-value" id="roi-enrollment-display">1.00x</span></div><input
               type="range" id="roi-enrollment-slider" min="25" max="200" value="100" step="5">
-            <div class="slider-ticks">
-              <span>Pessimistic</span><span>0.5x</span><span>Baseline</span><span>1.5x</span><span>Optimistic</span>
+            <div class="slider-ticks" style="position:relative;height:16px">
+              <span style="position:absolute;left:0;transform:translateX(0)">0.25x</span>
+              <span style="position:absolute;left:14.3%;transform:translateX(-50%)">0.5x</span>
+              <span style="position:absolute;left:42.9%;transform:translateX(-50%)">Baseline</span>
+              <span style="position:absolute;left:71.4%;transform:translateX(-50%)">1.5x</span>
+              <span style="position:absolute;right:0;transform:translateX(0)">2.0x</span>
             </div>
             <div class="roi-tier-grid" id="enrollment-tier-grid"></div>
           </div>
@@ -483,8 +493,12 @@
                   ranges from 5% (Tier 2, low switching cost) to 50% (Tier 6, high switching cost). Higher switching
                   scores mean more merchants are retained.</span></span><span class="slider-value" id="roi-churn-display">1.00x</span></div><input
               type="range" id="roi-churn-slider" min="25" max="200" value="100" step="5">
-            <div class="slider-ticks">
-              <span>Pessimistic</span><span>0.5x</span><span>Baseline</span><span>1.5x</span><span>Optimistic</span>
+            <div class="slider-ticks" style="position:relative;height:16px">
+              <span style="position:absolute;left:0;transform:translateX(0)">0.25x</span>
+              <span style="position:absolute;left:14.3%;transform:translateX(-50%)">0.5x</span>
+              <span style="position:absolute;left:42.9%;transform:translateX(-50%)">Baseline</span>
+              <span style="position:absolute;left:71.4%;transform:translateX(-50%)">1.5x</span>
+              <span style="position:absolute;right:0;transform:translateX(0)">2.0x</span>
             </div>
             <div class="roi-tier-grid" id="churn-tier-grid"></div>
           </div>
@@ -526,6 +540,65 @@
     </div>
   </div>
 
+  <!-- ==================== TAB 6: GE STRATEGY ==================== -->
+  <div class="tab-content" id="tab-lockin">
+    <div class="lockin-container">
+      <div class="lockin-hero">
+        <h2>The Growth Engine Lock-In Effect</h2>
+        <p class="lockin-subtitle">How progressive ecosystem adoption creates insurmountable switching costs</p>
+        <p class="lockin-thesis">The Growth Engine isn't just free software — it's a <strong>strategic moat</strong>. Each tier
+          wraps another strand around the merchant, embedding Woo deeper into their operations. By Tier 5, migration
+          becomes a 6-figure infrastructure project. By Tier 6, it's economically irrational to leave.</p>
+      </div>
+
+      <div class="lockin-controls">
+        <div class="slider-group" style="max-width:500px;margin:0 auto">
+          <div class="slider-label"><span>Merchant Annual GMV</span><span class="slider-value" id="lockin-gmv-display">$500,000</span></div>
+          <input type="range" id="lockin-gmv-slider" min="0" max="100" value="35" step="1">
+          <div class="slider-ticks"><span>$50K</span><span>$500K</span><span>$5M</span><span>$50M</span></div>
+        </div>
+      </div>
+
+      <div class="lockin-web-wrapper">
+        <svg id="lockin-web-svg" viewBox="0 0 600 420" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+
+      <div class="lockin-gauge-section">
+        <div class="lockin-gauge-title">Switching Difficulty</div>
+        <div class="lockin-gauge-bar">
+          <div class="lockin-gauge-fill" id="lockin-gauge-fill"></div>
+        </div>
+        <div class="lockin-gauge-meta">
+          <span class="lockin-gauge-score" id="lockin-score">5/10</span>
+          <span class="lockin-gauge-label" id="lockin-gauge-label">Moderate Friction</span>
+        </div>
+        <div class="lockin-gauge-ticks">
+          <span>Easy to Switch</span>
+          <span>Moderate</span>
+          <span>Hard to Leave</span>
+          <span>Locked In</span>
+        </div>
+      </div>
+
+      <div class="lockin-narrative" id="lockin-narrative"></div>
+
+      <div class="lockin-stats">
+        <div class="lockin-stat">
+          <div class="lockin-stat-value" id="lockin-tiers-active">3/6</div>
+          <div class="lockin-stat-label">Tiers Active</div>
+        </div>
+        <div class="lockin-stat">
+          <div class="lockin-stat-value" style="color:var(--growth-engine)" id="lockin-annual-value">$565/yr</div>
+          <div class="lockin-stat-label">Annual Value Locked</div>
+        </div>
+        <div class="lockin-stat">
+          <div class="lockin-stat-value" style="color:var(--negative)" id="lockin-migration-est">$55,000</div>
+          <div class="lockin-stat-label">Est. Migration Cost</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Footer -->
   <div class="footer">
     <p>Built by Shawn Forgaard | Woo Territory & Capacity Planning Trial</p>
@@ -551,6 +624,7 @@
   <script src="tabs/playbook.js"></script>
   <script src="tabs/csm.js"></script>
   <script src="tabs/roi.js"></script>
+  <script src="tabs/lockin.js"></script>
 </body>
 
 </html>
