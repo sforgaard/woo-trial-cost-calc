@@ -1,94 +1,100 @@
 /* ========== GE STRATEGY: LOCK-IN TREE (Tab 6) ========== */
 
 const TREE_TIERS = [
-    { tier: 1, gmv: 0, name: 'WCPay', pct: 32, difficulty: 2, value: 0, desc: 'Payment processing foundation', color: '#4ADE80' },
-    { tier: 2, gmv: 50000, name: 'AutomateWoo', pct: 44, difficulty: 4, value: 99, desc: 'Marketing automation & retention', color: '#60A5FA' },
-    { tier: 3, gmv: 100000, name: 'Subscriptions/CRM', pct: 55, difficulty: 6, value: 226, desc: 'Recurring revenue & customer data', color: '#A78BFA' },
-    { tier: 4, gmv: 250000, name: 'Jetpack Security', pct: 68, difficulty: 7, value: 240, desc: 'Enterprise security & compliance', color: '#FBBF24' },
-    { tier: 5, gmv: 500000, name: 'Pressable + Metorik', pct: 82, difficulty: 9, value: 1140, desc: 'Dedicated infrastructure & analytics', color: '#FF6B35' },
-    { tier: 6, gmv: 1000000, name: 'Custom Rate + Capital', pct: 100, difficulty: 10, value: 0, desc: 'Custom pricing & financing', color: '#F87171' }
+    { tier: 1, gmv: 0, name: 'WCPay', pct: 32, difficulty: 2, value: 0, color: '#4ADE80' },
+    { tier: 2, gmv: 50000, name: 'AutomateWoo', pct: 44, difficulty: 4, value: 99, color: '#60A5FA' },
+    { tier: 3, gmv: 100000, name: 'Subscriptions/CRM', pct: 55, difficulty: 6, value: 226, color: '#A78BFA' },
+    { tier: 4, gmv: 250000, name: 'Jetpack Security', pct: 68, difficulty: 7, value: 240, color: '#FBBF24' },
+    { tier: 5, gmv: 500000, name: 'Pressable + Metorik', pct: 82, difficulty: 9, value: 1140, color: '#FF6B35' },
+    { tier: 6, gmv: 1000000, name: 'Custom Rate + Capital', pct: 100, difficulty: 10, value: 0, color: '#F87171' }
 ];
 
 const TREE_NARRATIVES = [
-    { maxTier: 0, title: 'No Ecosystem Ties', summary: 'This merchant has zero switching cost. They can move to Shopify tomorrow with no friction. Every competitor is one click away.', risk: 'CRITICAL', riskColor: '#F87171' },
-    { maxTier: 1, title: 'Payment Foundation Only', summary: 'WCPay is running but can be replaced by Stripe or Shopify Payments in under a day. No ecosystem lock-in yet.', risk: 'HIGH', riskColor: '#F87171' },
-    { maxTier: 2, title: 'Automation Thread Connected', summary: 'AutomateWoo workflows are woven into daily operations — abandoned cart emails, follow-up sequences, VIP rules. Rebuilding these on Klaviyo takes 2-4 weeks.', risk: 'MEDIUM-HIGH', riskColor: '#FBBF24' },
-    { maxTier: 3, title: 'Revenue Model Entangled', summary: 'Subscription billing or CRM data lives in WooCommerce. Migration means re-creating recurring payment plans and customer histories — a 1-2 month project.', risk: 'MEDIUM', riskColor: '#FBBF24' },
-    { maxTier: 4, title: 'Security Layer Bound', summary: 'Real-time backups, malware scanning, and WAF protection are deeply integrated. Switching means finding and configuring alternatives while maintaining uptime — a risky 2-4 week transition.', risk: 'MEDIUM-LOW', riskColor: '#60A5FA' },
-    { maxTier: 5, title: 'Infrastructure Locked', summary: 'Dedicated Pressable hosting + Metorik analytics dashboards. The entire technical stack depends on WooCommerce. Migration is now a 3-6 month infrastructure project costing $50K-$150K.', risk: 'LOW', riskColor: '#4ADE80' },
-    { maxTier: 6, title: 'Functionally Locked In', summary: 'Custom WCPay rates, WooCommerce Capital financing, and assigned CSM. This merchant has negotiated terms that Shopify can\'t match at this scale. Switching is economically irrational.', risk: 'MINIMAL', riskColor: '#4ADE80' }
+    { title: 'No Roots Planted', summary: 'No ecosystem roots. This merchant can be uprooted by any competitor overnight — zero switching friction.', risk: 'CRITICAL', riskColor: '#F87171' },
+    { title: 'Surface Roots Only', summary: 'WCPay provides a shallow foothold, but the roots haven\'t gripped yet. A competitor can pull this merchant out with one tug — swap to Stripe or Shopify Payments in a day.', risk: 'HIGH', riskColor: '#F87171' },
+    { title: 'First Tendrils Woven In', summary: 'AutomateWoo workflows are woven into daily operations — abandoned cart sequences, follow-ups, VIP rules. Ripping these out means rebuilding on Klaviyo: 2-4 weeks of replanting.', risk: 'MEDIUM-HIGH', riskColor: '#FBBF24' },
+    { title: 'Roots Grip the Revenue Model', summary: 'Subscription billing and CRM data are now embedded in the soil. Uprooting means re-creating recurring plans and customer histories — a 1-2 month excavation project.', risk: 'MEDIUM', riskColor: '#FBBF24' },
+    { title: 'Taproots Around Security', summary: 'Real-time backups, malware scanning, and WAF are wrapped around the core. Pulling these roots risks the whole plant — switching security mid-operation is a dangerous 2-4 week transplant.', risk: 'MEDIUM-LOW', riskColor: '#60A5FA' },
+    { title: 'Deep Infrastructure Entanglement', summary: 'Dedicated Pressable hosting and Metorik analytics dashboards. The root system IS the infrastructure now. Extraction is a 3-6 month, $50K-$150K demolition project.', risk: 'LOW', riskColor: '#4ADE80' },
+    { title: 'Bedrock — Impossible to Uproot', summary: 'Custom WCPay rates, WooCommerce Capital financing, assigned CSM. The roots have reached bedrock. No competitor can offer equivalent terms. Leaving is economically irrational.', risk: 'MINIMAL', riskColor: '#4ADE80' }
 ];
 
+let currentTier = 0;
+
 function initLockin() {
-    const slider = document.getElementById('lockin-gmv-slider');
-    if (!slider) return;
+    // Build depth meter markers
+    buildDepthMarkers();
 
-    // Build tier labels
-    renderTierLabels();
+    // Attach tier button listeners
+    document.querySelectorAll('#lockin-tier-selector .tier-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('#lockin-tier-selector .tier-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentTier = parseInt(this.dataset.tier);
+            lockinUpdate();
+        });
+    });
 
-    slider.addEventListener('input', lockinUpdate);
     lockinUpdate();
 }
 
-function renderTierLabels() {
-    const container = document.getElementById('lockin-tier-labels');
+function buildDepthMarkers() {
+    const container = document.getElementById('lockin-depth-markers');
     if (!container) return;
-
-    container.innerHTML = TREE_TIERS.map(t => `
-        <div class="tree-tier-label" id="tree-label-${t.tier}" style="top:${t.pct}%;border-left-color:${t.color}">
-            <span class="tree-tier-num" style="color:${t.color}">T${t.tier}</span>
-            <span class="tree-tier-name">${t.name}</span>
-            <span class="tree-tier-gmv">${t.gmv === 0 ? '$0' : fmt(t.gmv)}</span>
-            <span class="tree-tier-diff">Difficulty: ${t.difficulty}/10</span>
-        </div>
-    `).join('');
+    container.innerHTML = TREE_TIERS.map(t =>
+        `<div class="depth-marker" style="top:${(t.difficulty / 10) * 100}%">
+            <span class="depth-marker-line" style="background:${t.color}"></span>
+            <span class="depth-marker-val" style="color:${t.color}">${t.difficulty}</span>
+        </div>`
+    ).join('');
 }
 
 function lockinUpdate() {
-    const gmv = s2g(document.getElementById('lockin-gmv-slider').value);
-    document.getElementById('lockin-gmv-display').textContent = fmt(gmv);
-
-    let activeTiers = 0;
+    const activeTiers = currentTier;
     let totalDifficulty = 0;
     let totalValue = 0;
 
     TREE_TIERS.forEach(t => {
-        const active = gmv >= t.gmv;
-        if (active) { activeTiers = t.tier; totalDifficulty = t.difficulty; if (t.value > 0) totalValue += t.value; }
-
-        // Label visibility
-        const label = document.getElementById(`tree-label-${t.tier}`);
-        if (label) {
-            label.classList.toggle('active', active);
-            label.classList.toggle('next', !active && (!TREE_TIERS.find(x => gmv < x.gmv) || TREE_TIERS.find(x => gmv < x.gmv).tier === t.tier));
+        if (activeTiers >= t.tier) {
+            totalDifficulty = t.difficulty;
+            if (t.value > 0) totalValue += t.value;
         }
     });
 
-    // Clip-path reveal: show image from top to the current tier depth
-    const revealPct = activeTiers > 0 ? TREE_TIERS[activeTiers - 1].pct : 25;
+    // Clip-path reveal
+    const revealPct = activeTiers > 0 ? TREE_TIERS[activeTiers - 1].pct : 20;
     const treeImg = document.getElementById('lockin-tree-img');
     if (treeImg) {
         treeImg.style.clipPath = `inset(0 0 ${100 - revealPct}% 0)`;
     }
 
-    // Switching difficulty gauge
-    const gauge = document.getElementById('lockin-gauge-fill');
+    // Depth meter fill
+    const depthFill = document.getElementById('lockin-depth-fill');
+    if (depthFill) {
+        const fillPct = (totalDifficulty / 10) * 100;
+        depthFill.style.height = fillPct + '%';
+        if (totalDifficulty <= 3) depthFill.style.background = 'linear-gradient(180deg, #4ADE80, #60A5FA)';
+        else if (totalDifficulty <= 6) depthFill.style.background = 'linear-gradient(180deg, #60A5FA, #A78BFA)';
+        else if (totalDifficulty <= 8) depthFill.style.background = 'linear-gradient(180deg, #FBBF24, #FF6B35)';
+        else depthFill.style.background = 'linear-gradient(180deg, #FF6B35, #F87171)';
+    }
+
+    // Animate depth markers
+    document.querySelectorAll('.depth-marker').forEach((m, i) => {
+        m.classList.toggle('active', activeTiers >= (i + 1));
+    });
+
+    // Score & label
     const scoreEl = document.getElementById('lockin-score');
     const labelEl = document.getElementById('lockin-gauge-label');
-    if (gauge) {
-        gauge.style.width = (totalDifficulty * 10) + '%';
-        if (totalDifficulty <= 3) gauge.style.background = 'linear-gradient(90deg, #4ADE80, #60A5FA)';
-        else if (totalDifficulty <= 6) gauge.style.background = 'linear-gradient(90deg, #60A5FA, #FBBF24)';
-        else if (totalDifficulty <= 8) gauge.style.background = 'linear-gradient(90deg, #FBBF24, #FF6B35)';
-        else gauge.style.background = 'linear-gradient(90deg, #FF6B35, #F87171)';
-    }
-    if (scoreEl) scoreEl.textContent = totalDifficulty + '/10';
+    if (scoreEl) scoreEl.textContent = totalDifficulty;
     if (labelEl) {
-        if (totalDifficulty <= 2) labelEl.textContent = 'Easy to Switch';
-        else if (totalDifficulty <= 4) labelEl.textContent = 'Low Friction';
-        else if (totalDifficulty <= 6) labelEl.textContent = 'Moderate Friction';
-        else if (totalDifficulty <= 8) labelEl.textContent = 'Hard to Leave';
-        else labelEl.textContent = 'Functionally Locked In';
+        if (totalDifficulty === 0) labelEl.textContent = 'No Roots';
+        else if (totalDifficulty <= 2) labelEl.textContent = 'Surface Roots';
+        else if (totalDifficulty <= 4) labelEl.textContent = 'Shallow Grip';
+        else if (totalDifficulty <= 6) labelEl.textContent = 'Deep Roots';
+        else if (totalDifficulty <= 8) labelEl.textContent = 'Entangled';
+        else labelEl.textContent = 'Bedrock';
     }
 
     // Narrative
@@ -104,13 +110,26 @@ function lockinUpdate() {
         `;
     }
 
-    // Stats row
+    // Stats
     document.getElementById('lockin-tiers-active').textContent = activeTiers + '/6';
     document.getElementById('lockin-annual-value').textContent = totalValue > 0 ? fmtF(totalValue) + '/yr' : '$0';
-    document.getElementById('lockin-migration-est').textContent = getMC ? fmtF(getMC(gmv, totalDifficulty)) : '—';
+    const migCost = activeTiers > 0 ? getMC(TREE_TIERS[activeTiers - 1].gmv, totalDifficulty) : 0;
+    document.getElementById('lockin-migration-est').textContent = migCost > 0 ? fmtF(migCost) : '$0';
+
+    // Highlight active tier buttons with color
+    document.querySelectorAll('#lockin-tier-selector .tier-btn').forEach(btn => {
+        const tier = parseInt(btn.dataset.tier);
+        if (tier > 0 && tier <= activeTiers) {
+            btn.style.borderColor = TREE_TIERS[tier - 1].color;
+            btn.style.color = TREE_TIERS[tier - 1].color;
+        } else {
+            btn.style.borderColor = '';
+            btn.style.color = '';
+        }
+    });
 }
 
-// Init on script load — the tab content exists in DOM already
+// Init when tab becomes visible
 let lockinInited = false;
 function tryInitLockin() {
     if (lockinInited) return;
@@ -120,11 +139,7 @@ function tryInitLockin() {
         lockinInited = true;
     }
 }
-
-// Try on load
 tryInitLockin();
-
-// Also try when tab is clicked
 document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => setTimeout(tryInitLockin, 50));
 });
