@@ -1,11 +1,12 @@
 /* ========== TCO CALCULATOR (Tab 1) ========== */
-const PLANS = { basic: { name: 'Basic', monthly: 39, rate: 0.029, gatewayFee: 0.02, label: 'Basic ($39/mo)' }, grow: { name: 'Grow', monthly: 105, rate: 0.026, gatewayFee: 0.01, label: 'Grow ($105/mo)' }, advanced: { name: 'Advanced', monthly: 399, rate: 0.024, gatewayFee: 0.006, label: 'Advanced ($399/mo)' }, plus: { name: 'Plus', monthly: 2300, rate: 0.022, gatewayFee: 0.0015, label: 'Plus ($2,300/mo)', variable: true, variableRate: 0.0025, variableFloor: 920000 * 12 } };
+const PLANS = { basic: { name: 'Basic', monthly: 39, rate: 0.029, gatewayFee: 0.02, label: 'Basic ($39/mo)' }, grow: { name: 'Grow', monthly: 105, rate: 0.026, gatewayFee: 0.01, label: 'Grow ($105/mo)' }, advanced: { name: 'Advanced', monthly: 399, rate: 0.024, gatewayFee: 0.006, label: 'Advanced ($399/mo)' }, plus: { name: 'Plus', monthly: 2300, rate: 0.0215, gatewayFee: 0.0015, label: 'Plus ($2,300/mo)', variable: true, variableRate: 0.0025, variableFloor: 920000 * 12 } };
 const GE_EQUIV = [{ gmv: 50000, mo: 100 }, { gmv: 100000, mo: 99 }, { gmv: 250000, mo: 0 }, { gmv: 500000, mo: 100 }, { gmv: 1000000, mo: 0 }];
 
 let currentGMV = 500000, currentPlan = 'advanced', costChart = null, paybackChart = null;
 let manualPlan = false, manualWooDev = false, manualShopifyDev = false, manualWooApps = false;
 
-function s2g(v) { const mn = Math.log(50000), mx = Math.log(50000000); return Math.round(Math.exp(mn + (v / 100) * (mx - mn))) }
+function snapGMV(g) { if (g >= 20000000) return Math.round(g / 1000000) * 1000000; if (g >= 1000000) return Math.round(g / 100000) * 100000; return Math.round(g / 50000) * 50000; }
+function s2g(v) { const mn = Math.log(50000), mx = Math.log(50000000); return snapGMV(Math.round(Math.exp(mn + (v / 100) * (mx - mn)))) }
 function g2s(g) { const mn = Math.log(50000), mx = Math.log(50000000); return Math.round(((Math.log(g) - mn) / (mx - mn)) * 100) }
 function fmt(v) { if (v >= 1e6) return '$' + (v / 1e6).toFixed(1) + 'M'; if (v >= 1000) return '$' + Math.round(v).toLocaleString(); return '$' + v.toFixed(0) }
 function fmtF(v) { return '$' + Math.round(v).toLocaleString() }
