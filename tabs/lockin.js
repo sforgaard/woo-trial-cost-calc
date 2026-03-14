@@ -110,15 +110,21 @@ function lockinUpdate() {
     document.getElementById('lockin-migration-est').textContent = getMC ? fmtF(getMC(gmv, totalDifficulty)) : '—';
 }
 
-// Lazy init when tab becomes visible
-const lockinObserver = new MutationObserver(() => {
+// Init on script load — the tab content exists in DOM already
+let lockinInited = false;
+function tryInitLockin() {
+    if (lockinInited) return;
     const tabEl = document.getElementById('tab-lockin');
-    if (tabEl && tabEl.classList.contains('active') && !document.getElementById('tree-label-1')) {
+    if (tabEl && tabEl.classList.contains('active')) {
         initLockin();
+        lockinInited = true;
     }
-});
-const lockinTab = document.getElementById('tab-lockin');
-if (lockinTab) {
-    lockinObserver.observe(lockinTab, { attributes: true, attributeFilter: ['class'] });
-    if (lockinTab.classList.contains('active')) initLockin();
 }
+
+// Try on load
+tryInitLockin();
+
+// Also try when tab is clicked
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => setTimeout(tryInitLockin, 50));
+});
