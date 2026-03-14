@@ -1,11 +1,11 @@
 /* ========== GE STRATEGY: LOCK-IN TREE (Tab 6) ========== */
 
 const TREE_TIERS = [
-    { tier: 1, gmv: 0, name: 'WCPay', pct: 32, difficulty: 2, value: 0, color: '#4ADE80' },
-    { tier: 2, gmv: 50000, name: 'AutomateWoo', pct: 44, difficulty: 4, value: 99, color: '#60A5FA' },
-    { tier: 3, gmv: 100000, name: 'Subscriptions/CRM', pct: 55, difficulty: 6, value: 226, color: '#A78BFA' },
-    { tier: 4, gmv: 250000, name: 'Jetpack Security', pct: 68, difficulty: 7, value: 240, color: '#FBBF24' },
-    { tier: 5, gmv: 500000, name: 'Pressable + Metorik', pct: 82, difficulty: 9, value: 1140, color: '#FF6B35' },
+    { tier: 1, gmv: 0, name: 'WCPay', pct: 38, difficulty: 2, value: 0, color: '#4ADE80' },
+    { tier: 2, gmv: 50000, name: 'AutomateWoo', pct: 50, difficulty: 4, value: 99, color: '#60A5FA' },
+    { tier: 3, gmv: 100000, name: 'Subscriptions/CRM', pct: 62, difficulty: 6, value: 226, color: '#A78BFA' },
+    { tier: 4, gmv: 250000, name: 'Jetpack Security', pct: 75, difficulty: 7, value: 240, color: '#FBBF24' },
+    { tier: 5, gmv: 500000, name: 'Pressable + Metorik', pct: 88, difficulty: 9, value: 1140, color: '#FF6B35' },
     { tier: 6, gmv: 1000000, name: 'Custom Rate + Capital', pct: 100, difficulty: 10, value: 0, color: '#F87171' }
 ];
 
@@ -62,7 +62,7 @@ function lockinUpdate() {
     });
 
     // Clip-path reveal
-    const revealPct = activeTiers > 0 ? TREE_TIERS[activeTiers - 1].pct : 20;
+    const revealPct = activeTiers > 0 ? TREE_TIERS[activeTiers - 1].pct : 25;
     const treeImg = document.getElementById('lockin-tree-img');
     if (treeImg) {
         treeImg.style.clipPath = `inset(0 0 ${100 - revealPct}% 0)`;
