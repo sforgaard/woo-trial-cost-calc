@@ -18,45 +18,49 @@ const CHURN_DATA = {
     outflow: [
         { platform: 'Shopify', count: 604, color: '#95BF47' },
         { platform: 'Custom', count: 137, color: '#60A5FA' },
-        { platform: 'Magento', count: 6, color: '#F97316' },
-        { platform: 'Wix', count: 3, color: '#3B82F6' },
-        { platform: 'Squarespace', count: 7, color: '#8B5CF6' },
-        { platform: 'BigCommerce', count: 2, color: '#EC4899' },
-        { platform: 'Other', count: 45, color: '#6B7280' }
+        { platform: 'Squarespace', count: 19, color: '#8B5CF6' },
+        { platform: 'Magento', count: 12, color: '#F97316' },
+        { platform: 'Ecwid', count: 11, color: '#EC4899' },
+        { platform: 'Wix', count: 10, color: '#3B82F6' },
+        { platform: 'OpenCart', count: 10, color: '#F59E0B' },
+        { platform: 'BigCommerce', count: 7, color: '#10B981' },
+        { platform: 'Other', count: 64, color: '#6B7280' }
     ],
     shopifyByTier: [
-        { tier: '$1-$50K', merchants: 75, gmvAtRisk: 1875000, avgGmv: 25000 },
-        { tier: '$50K-$250K', merchants: 65, gmvAtRisk: 8125000, avgGmv: 125000 },
+        { tier: '$1-$50K', merchants: 28, gmvAtRisk: 700000, avgGmv: 25000 },
+        { tier: '$50K-$250K', merchants: 112, gmvAtRisk: 14000000, avgGmv: 125000 },
         { tier: '$250K-$500K', merchants: 44, gmvAtRisk: 11000000, avgGmv: 250000 },
         { tier: '$500K-$1M', merchants: 29, gmvAtRisk: 14500000, avgGmv: 500000 },
         { tier: '$1M-$2M', merchants: 56, gmvAtRisk: 56000000, avgGmv: 1000000 },
         { tier: '$2M-$4M', merchants: 57, gmvAtRisk: 114000000, avgGmv: 2000000 },
         { tier: '$4M-$8M', merchants: 57, gmvAtRisk: 228000000, avgGmv: 4000000 },
         { tier: '$8M-$16M', merchants: 100, gmvAtRisk: 800000000, avgGmv: 8000000 },
-        { tier: '$16M-$50M', merchants: 91, gmvAtRisk: 2275000000, avgGmv: 25000000 }
+        { tier: '$16M-$50M', merchants: 91, gmvAtRisk: 2275000000, avgGmv: 25000000 },
+        { tier: '$50M+', merchants: 17, gmvAtRisk: 850000000, avgGmv: 50000000 }
     ]
 };
 
-// Plugin stickiness data from PDF p.33
+// Plugin stickiness data — verified from woo_store_details (has_wcpay vs non)
 const STICKINESS_DATA = [
-    { name: 'WC Services/Tax', wcpay: 78.3, nonWcpay: 63.4, multiplier: '1.2x' },
-    { name: 'Jetpack', wcpay: 34.1, nonWcpay: 20.1, multiplier: '1.7x' },
-    { name: 'MailPoet', wcpay: 6.2, nonWcpay: 2.2, multiplier: '2.8x' },
-    { name: 'WC Subscriptions', wcpay: 6.2, nonWcpay: 1.9, multiplier: '3.3x' },
-    { name: 'WC Memberships', wcpay: 2.4, nonWcpay: 0.8, multiplier: '3.0x' },
-    { name: 'AutomateWoo', wcpay: 1.7, nonWcpay: 0.3, multiplier: '5.7x' },
-    { name: 'Metorik', wcpay: 0.8, nonWcpay: 0.2, multiplier: '4.0x' }
+    { name: 'AutomateWoo', wcpay: 8.21, nonWcpay: 2.11, multiplier: '3.9x' },
+    { name: 'Jetpack', wcpay: 49.82, nonWcpay: 18.18, multiplier: '2.7x' },
+    { name: 'MailPoet', wcpay: 19.89, nonWcpay: 7.76, multiplier: '2.6x' },
+    { name: 'WC Subscriptions', wcpay: 4.93, nonWcpay: 4.57, multiplier: '1.1x' },
+    { name: 'Metorik', wcpay: 1.03, nonWcpay: 1.31, multiplier: '0.8x' }
 ];
 
-// Tool adoption growth factors by GMV tier
+// Tool adoption growth factors by GMV tier — from WCPay_Retention_Analysis rows 77-86
+// Growth Factor = ($1M+ adoption %) / (<$100K adoption %)
 const ADOPTION_CURVES = [
-    { name: 'WC Services/Tax', growth: 1.3, color: '#8B8FA8' },
-    { name: 'Jetpack', growth: 1.8, color: '#3ECF8E' },
-    { name: 'Metorik', growth: 40, color: '#FF6B35' },
-    { name: 'WC Subscriptions', growth: 12, color: '#7F54B3' },
-    { name: 'AutomateWoo', growth: 7, color: '#60A5FA' },
-    { name: 'WC Memberships', growth: 5, color: '#95BF47' },
-    { name: 'MailPoet', growth: 3, color: '#F97316' }
+    { name: 'Metorik', growth: 39.7, color: '#FF6B35' },
+    { name: 'AutomateWoo', growth: 6.8, color: '#60A5FA' },
+    { name: 'Klaviyo', growth: 3.7, color: '#E040FB' },
+    { name: 'WC Subscriptions', growth: 3.2, color: '#7F54B3' },
+    { name: 'WC Shipping', growth: 0.9, color: '#8B8FA8' },
+    { name: 'Google L&A', growth: 0.7, color: '#FBBC04' },
+    { name: 'Jetpack', growth: 0.7, color: '#3ECF8E' },
+    { name: 'WCPay', growth: 0.6, color: '#7F54B3' },
+    { name: 'MailPoet', growth: 0.3, color: '#F97316' }
 ];
 
 let wcpayChart = null, churnChart = null, stickinessChartInst = null, adoptionChart = null, shopifyTierChart = null;
