@@ -1,22 +1,22 @@
 /* ========== ROI & ANALYTICS (Tab 5) ========== */
 
-// Data from territory plan p.38-40 and TrialFindings.xlsx
+// Data from Trial Data and Analysis26.03.15.xlsx - WCPay_Retention_Analysis rows 108-115
 const ROI_TIERS = [
-    { tier: 1, reward: 'WCPay Setup', gmv: '$0', totalMerchs: 3177, wcpayMerchs: 822, wcpayRate: 25.9, baseEnroll: 0, atRiskRev: 0, churnSaved: 0, oppCost: 0, programCost: 0 },
-    { tier: 2, reward: 'AutomateWoo', gmv: '$50K', totalMerchs: 2382, wcpayMerchs: 624, wcpayRate: 26.2, baseEnroll: 5, atRiskRev: 0, churnSaved: 5, oppCost: 11791, programCost: 0 },
-    { tier: 3, reward: 'WC Subs/CRM', gmv: '$100K', totalMerchs: 231, wcpayMerchs: 59, wcpayRate: 25.5, baseEnroll: 10, atRiskRev: 172, churnSaved: 15, oppCost: 5221, programCost: 0 },
-    { tier: 4, reward: 'Jetpack Security', gmv: '$250K', totalMerchs: 194, wcpayMerchs: 52, wcpayRate: 26.8, baseEnroll: 20, atRiskRev: 0, churnSaved: 25, oppCost: 9312, programCost: 0 },
-    { tier: 5, reward: 'Pressable+Metorik', gmv: '$500K', totalMerchs: 192, wcpayMerchs: 47, wcpayRate: 24.5, baseEnroll: 35, atRiskRev: 5626, churnSaved: 40, oppCost: 36288, programCost: 40320 },
-    { tier: 6, reward: 'Custom Rate', gmv: '$1M+', totalMerchs: 260, wcpayMerchs: 40, wcpayRate: 15.4, baseEnroll: 50, atRiskRev: 656140, churnSaved: 50, oppCost: 0, programCost: 0 },
-    { tier: 7, reward: '$20M+', gmv: '$20M+', totalMerchs: 45, wcpayMerchs: 3, wcpayRate: 6.7, baseEnroll: 50, atRiskRev: 0, churnSaved: 50, oppCost: 0, programCost: 0, chartOnly: true }
+    { tier: 1, reward: 'WCPay Setup', gmv: '$0', totalMerchs: 3177, wcpayMerchs: 822, wcpayRate: 25.9, baseEnroll: 0, atRiskRev: 0, churnSaved: 0, oppCost: 0, programCost: 0, retailCost: 0, internalCost: 0 },
+    { tier: 2, reward: 'AutomateWoo', gmv: '$50K', totalMerchs: 2382, wcpayMerchs: 624, wcpayRate: 26.2, baseEnroll: 5, atRiskRev: 0, churnSaved: 5, oppCost: 18937, programCost: 0, retailCost: 159, internalCost: 0 },
+    { tier: 3, reward: 'WC Subs/CRM', gmv: '$100K', totalMerchs: 231, wcpayMerchs: 59, wcpayRate: 25.5, baseEnroll: 10, atRiskRev: 172, churnSaved: 15, oppCost: 5221, programCost: 0, retailCost: 226, internalCost: 0 },
+    { tier: 4, reward: 'Jetpack Security', gmv: '$250K', totalMerchs: 194, wcpayMerchs: 52, wcpayRate: 26.8, baseEnroll: 20, atRiskRev: 0, churnSaved: 25, oppCost: 9312, programCost: 0, retailCost: 240, internalCost: 0 },
+    { tier: 5, reward: 'Pressable+Metorik', gmv: '$500K', totalMerchs: 192, wcpayMerchs: 47, wcpayRate: 24.5, baseEnroll: 35, atRiskRev: 5626, churnSaved: 40, oppCost: 36288, programCost: 40320, retailCost: 1140, internalCost: 600 },
+    { tier: 6, reward: 'Custom Rate', gmv: '$1M+', totalMerchs: 260, wcpayMerchs: 40, wcpayRate: 15.4, baseEnroll: 50, atRiskRev: 656140, churnSaved: 50, oppCost: 0, programCost: 0, retailCost: 0, internalCost: 0 },
+    { tier: 7, reward: '$20M+', gmv: '$20M+', totalMerchs: 45, wcpayMerchs: 3, wcpayRate: 6.7, baseEnroll: 50, atRiskRev: 0, churnSaved: 50, oppCost: 0, programCost: 0, retailCost: 0, internalCost: 0, chartOnly: true }
 ];
 
 const BASELINE_ADOPTION = 26.2;
 
-// Churn destination data from TrialFindings.xlsx
+// Churn destination data from Trial Data and Analysis26.03.15.xlsx
 const CHURN_DATA = {
     outflow: [
-        { platform: 'Shopify', count: 604, color: '#95BF47' },
+        { platform: 'Shopify', count: 591, color: '#95BF47' },
         { platform: 'Custom', count: 137, color: '#60A5FA' },
         { platform: 'Squarespace', count: 19, color: '#8B5CF6' },
         { platform: 'Magento', count: 12, color: '#F97316' },
@@ -28,15 +28,15 @@ const CHURN_DATA = {
     ],
     shopifyByTier: [
         { tier: '$1-$50K', merchants: 28, gmvAtRisk: 700000, avgGmv: 25000 },
-        { tier: '$50K-$250K', merchants: 112, gmvAtRisk: 14000000, avgGmv: 125000 },
-        { tier: '$250K-$500K', merchants: 44, gmvAtRisk: 11000000, avgGmv: 250000 },
-        { tier: '$500K-$1M', merchants: 29, gmvAtRisk: 14500000, avgGmv: 500000 },
-        { tier: '$1M-$2M', merchants: 56, gmvAtRisk: 56000000, avgGmv: 1000000 },
-        { tier: '$2M-$4M', merchants: 57, gmvAtRisk: 114000000, avgGmv: 2000000 },
-        { tier: '$4M-$8M', merchants: 57, gmvAtRisk: 228000000, avgGmv: 4000000 },
-        { tier: '$8M-$16M', merchants: 100, gmvAtRisk: 800000000, avgGmv: 8000000 },
-        { tier: '$16M-$50M', merchants: 91, gmvAtRisk: 2275000000, avgGmv: 25000000 },
-        { tier: '$50M+', merchants: 17, gmvAtRisk: 850000000, avgGmv: 50000000 }
+        { tier: '$50K-$250K', merchants: 112, gmvAtRisk: 16800000, avgGmv: 150000 },
+        { tier: '$250K-$500K', merchants: 44, gmvAtRisk: 16500000, avgGmv: 375000 },
+        { tier: '$500K-$1M', merchants: 29, gmvAtRisk: 21750000, avgGmv: 750000 },
+        { tier: '$1M-$2M', merchants: 56, gmvAtRisk: 84000000, avgGmv: 1500000 },
+        { tier: '$2M-$4M', merchants: 57, gmvAtRisk: 171000000, avgGmv: 3000000 },
+        { tier: '$4M-$8M', merchants: 57, gmvAtRisk: 342000000, avgGmv: 6000000 },
+        { tier: '$8M-$16M', merchants: 100, gmvAtRisk: 1200000000, avgGmv: 12000000 },
+        { tier: '$16M-$50M', merchants: 91, gmvAtRisk: 3003000000, avgGmv: 33000000 },
+        { tier: '$50M+', merchants: 17, gmvAtRisk: 1275000000, avgGmv: 75000000 }
     ]
 };
 
@@ -134,7 +134,7 @@ function roiUpdate() {
         </div>
         <div class="roi-stat">
             <div class="roi-stat-value" style="color:var(--warning)">${fmtF(Math.round(totalOppCost))}</div>
-            <div class="roi-stat-label has-tooltip">Opp Cost (foregone rev)<span class="tooltip-text">Retail revenue Automattic gives up by providing products free: AutomateWoo ($99/yr), WC Subscriptions ($279/yr), Jetpack Security ($240/yr), Pressable ($540/yr), Metorik ($600/yr). Counted at full retail price to be conservative, though most merchants likely would not have purchased at retail.</span></div>
+            <div class="roi-stat-label has-tooltip">Opp Cost (foregone rev)<span class="tooltip-text">Retail revenue Automattic gives up by providing products free: AutomateWoo ($159/yr), WC Subscriptions ($226/yr), Jetpack Security ($240/yr), Pressable+Metorik ($1,140/yr at T5). Total retail cost per store across all tiers: $1,765/yr.</span></div>
         </div>
     `;
 
